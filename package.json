@@ -1,0 +1,41 @@
+{
+  "name": "HappyFood",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"parcel watch ./index.html\" \"nodemon ./src/server/server.js\"",
+    "build": "parcel build ./index.html",
+    "lint": "./node_modules/.bin/eslint . --ext .jsx,.js"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "dist/*",
+      ".cache/*"
+    ]
+  },
+  "author": "Vincent Deplais & Elmar Furtado Tavares",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.15",
+    "node-sass": "^4.8.3",
+    "qs": "^6.5.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-redux": "^5.0.7",
+    "react-router": "^4.2.0",
+    "redux": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "concurrently": "^3.5.1",
+    "nodemon": "^1.17.3",
+    "parcel-bundler": "^1.7.1"
+  }
+}
