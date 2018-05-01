@@ -1,4 +1,4 @@
-import '../../styles/Test.scss';
+import '../../styles/_test.scss';
 import React, { Component } from 'react';
 
 import axios from 'axios';
@@ -8,28 +8,18 @@ class Test extends Component {
     super();
 
     this.state = {
-      hello: 'hihi'
+      hello: 'Hello'
     };
   }
 
-  componentDidMount() {
-    axios
-      .get(`/user`)
-      .then(res => {
-        console.log(res.data.user);
-      })
-      .catch(err => {
-        console.log(error);
-      });
-  }
-
   render() {
+    const { hello } = this.state;
     return (
-      <div>
-        <p>Bonjour</p>
-        <p>Bonjour</p>
-        <p>Bonjour</p>
-      </div>
+      <main>
+        <p>{hello}</p>
+        <p>Hi</p>
+        <p>What's up ?</p>
+      </main>
     );
   }
 }

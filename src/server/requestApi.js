@@ -2,12 +2,16 @@ const qs = require('qs');
 
 import accountApi from './dataServer';
 
-const method = 'POST';
-
-let dataUrl = accountApi;
+const setOptions = (method, dataUrl, url) => ({
+  method,
+  headers: { 'content-type': 'application/x-www-form-urlencoded' },
+  data: qs.stringify(dataUrl),
+  url
+});
 
 const getProductBy = (type, value) => {
   let url;
+  let dataUrl = accountApi;
 
   switch (type) {
     case 'category':
@@ -30,12 +34,7 @@ const getProductBy = (type, value) => {
       console.error('Please enter a correct type / value');
   }
 
-  const options = {
-    method,
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    data: qs.stringify(dataUrl),
-    url
-  };
+  const options = setOptions('POST', dataUrl, url);
 
   axios(options).then(response => {
     return response;
@@ -44,13 +43,7 @@ const getProductBy = (type, value) => {
 
 const getCategoryList = () => {
   const url = 'https://api.foodfacts.com/ci/api/foodfacts/food_categories';
-
-  const options = {
-    method,
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    data: qs.stringify(dataUrl),
-    url
-  };
+  const options = setOptions('POST', dataUrl, url);
 
   axios(options).then(response => {
     return response;
@@ -59,13 +52,7 @@ const getCategoryList = () => {
 
 const getSubCategoryList = () => {
   const url = 'https://api.foodfacts.com/ci/api/foodfacts/food_sub_categories';
-
-  const options = {
-    method,
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    data: qs.stringify(dataUrl),
-    url
-  };
+  const options = setOptions('POST', dataUrl, url);
 
   axios(options).then(response => {
     return response;

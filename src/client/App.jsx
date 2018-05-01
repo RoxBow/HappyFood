@@ -1,6 +1,8 @@
+import './styles/_reset.scss';
 import React, { Component } from 'react';
 import axios from 'axios';
-import Test from './components/Test/Test';
+import Header from './components/Header/HeaderContainer';
+import Popin from './components/Popin/PopinContainer';
 
 class App extends Component {
   constructor() {
@@ -9,9 +11,10 @@ class App extends Component {
 
   render() {
     return (
-      <main>
-        <Test />
-      </main>
+      <div>
+        <Header />
+        <Popin />
+      </div>
     );
   }
 }

@@ -1,0 +1,41 @@
+@import './_variables.scss';
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  background-image: url('../img/bg_header.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+
+  h1 {
+    font-family: $mainFont;
+    font-size: 4rem;
+    font-weight: bold;
+  }
+
+  & > ul {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+
+    li {
+      cursor: pointer;
+      padding: 20px 15px;
+      text-align: center;
+    }
+
+    .login {
+      background-color: #89C542;
+    }
+
+    .register {
+      background-color: #73577D;
+    }
+  } // ul
+
+}

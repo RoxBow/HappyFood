@@ -3,4 +3,4 @@ exports.accountApi = {
   password: ''
 };
 
-exports.urlMongoDB = 'mongodb://127.0.0.1:27017';
+exports.urlMongoDB = 'mongodb://127.0.0.1:27017/happyfood';
