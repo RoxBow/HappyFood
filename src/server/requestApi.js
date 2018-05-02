@@ -1,6 +1,6 @@
 const qs = require('qs');
 
-import accountApi from './dataServer';
+const { accountApi } = require('./dataServer');
 
 const setOptions = (method, dataUrl, url) => ({
   method,
@@ -9,7 +9,7 @@ const setOptions = (method, dataUrl, url) => ({
   url
 });
 
-const getProductBy = (type, value) => {
+exports.getProductBy = (type, value) => {
   let url;
   let dataUrl = accountApi;
 
@@ -41,7 +41,7 @@ const getProductBy = (type, value) => {
   });
 };
 
-const getCategoryList = () => {
+exports.getCategoryList = () => {
   const url = 'https://api.foodfacts.com/ci/api/foodfacts/food_categories';
   const options = setOptions('POST', dataUrl, url);
 
@@ -50,7 +50,7 @@ const getCategoryList = () => {
   });
 };
 
-const getSubCategoryList = () => {
+exports.getSubCategoryList = () => {
   const url = 'https://api.foodfacts.com/ci/api/foodfacts/food_sub_categories';
   const options = setOptions('POST', dataUrl, url);
 
@@ -58,5 +58,3 @@ const getSubCategoryList = () => {
     return response;
   });
 };
-
-export { getProductBy, getCategoryList, getSubCategoryList };

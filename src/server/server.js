@@ -2,19 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const path = require('path');
-
 const mongoose = require('mongoose');
-
-const port = 3001; // set port server
 const axios = require('axios');
-
 const cors = require('cors');
 
 const { urlMongoDB } = require('./dataServer');
+const { getProductBy } = require('./requestApi');
 
-app.use(cors()); // set cors module on server express
+const port = 3001; // set port server
 
-/* 
+/*
   Add this line before express' response to set CORS header:
   res.header("Access-Control-Allow-Origin", "*");
 */
@@ -29,6 +26,9 @@ db.on('error', console.error.bind(console, 'Error connect database'));
 db.once('open', () => {
   console.log('Connected to database');
 });
+
+// set cors module on server express
+app.use(cors());
 
 // Load statics files
 app.use(express.static('dist'));
@@ -47,27 +47,21 @@ app.get('*', (req, res, next) => {
   next();
 });
 
-app.get('/user', (req, res) => {
-  res.json({
-    user: 'test'
-  });
-});
 
-app.route('/createUser').post((req, res) => {
+app.post('/signup', (req, res) => {
+  
   let user = new User();
 
   user.username = req.body.username;
   user.password = req.body.password;
-  user.firstName = req.body.firstName;
-  user.lastName = req.body.lastName;
   user.email = req.body.email;
 
   // Save user in BDD
   user.save(err => {
     if (err) res.send(err);
-    res.send({ message: 'User register' });
-    console.log('user save in database');
+    res.send({ message: 'User saved in BDD' });
   });
+
 });
 
 app.listen(process.env.PORT || port, () => {

@@ -1,12 +1,11 @@
 import '../../styles/_form.scss';
 
 import React, { Component } from 'react';
-import { Field, reduxForm } from 'redux-form';
-import validateForm from '../../helpers/validateForm';
+import { Field } from 'redux-form';
 import Input from './Input';
 
-const FormSignUp = ({ handleSubmit, submitting }) => (
-  <form onSubmit={handleSubmit}>
+const FormSignUp = ({ signUp, submitting }) => (
+  <form onSubmit={signUp}>
     <Field name="username" type="text" component={Input} label="Username" />
     <Field name="password" type="password" component={Input} label="Password" />
     <Field name="email" type="email" component={Input} label="Email" />
@@ -16,7 +15,4 @@ const FormSignUp = ({ handleSubmit, submitting }) => (
   </form>
 );
 
-export default reduxForm({
-  form: 'signUp',
-  validateForm
-})(FormSignUp);
+export default FormSignUp;

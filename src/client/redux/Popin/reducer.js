@@ -1,12 +1,14 @@
 const initialState = {
-  open: false
+  open: false,
+  popinType: null
 };
 
-export const popinReducer = (state = initialState, action) => {
+const popinReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SHOW_POPIN':
       return Object.assign({}, state, {
-        open: true
+        open: true,
+        popinType: action.popinType
       });
     case 'HIDE_POPIN':
       return Object.assign({}, state, {
@@ -16,3 +18,5 @@ export const popinReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+export default popinReducer;

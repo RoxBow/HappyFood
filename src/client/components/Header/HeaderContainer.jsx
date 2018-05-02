@@ -5,9 +5,7 @@ import Header from './Header';
 
 const mapDispatchToProps = dispatch => {
   return {
-    showPopin: () => {
-      dispatch(showPopin());
-    }
+    showPopin: (type) => dispatch(showPopin(type)),
   };
 };
 
