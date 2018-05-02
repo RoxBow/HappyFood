@@ -1,4 +1,5 @@
 'use strict';
+const Image = require('./Image');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -20,15 +21,16 @@ const User = new Schema(
       minlength: 6
     },
     firstName: {
-      type: String,
+      type: String
     },
     lastName: {
-      type: String,
+      type: String
     },
     email: {
       type: String,
       required: [true, "can't be blank"]
     },
+    avatar: { type: Schema.Types.ObjectId, ref: 'Image' },
     favorites: Array,
     recipesDone: Array
   },

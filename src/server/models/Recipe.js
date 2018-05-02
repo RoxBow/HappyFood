@@ -1,9 +1,14 @@
 'use strict';
+
+const Image = require('./Image');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Recipe = new Schema({
-  ingredients: Array
+  title: String,
+  description: String,
+  ingredients: Array,
+  img: { type: Schema.Types.ObjectId, ref: 'Image' },
 });
 
 module.exports = mongoose.model('Recipe', Recipe);
