@@ -11,9 +11,7 @@ const popinReducer = (state = initialState, action) => {
         popinType: action.popinType
       });
     case 'HIDE_POPIN':
-      return Object.assign({}, state, {
-        open: false
-      });
+      return initialState;
     default:
       return state;
   }

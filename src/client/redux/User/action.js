@@ -25,10 +25,7 @@ export const signUp = e => {
     });
 
   return {
-    type: SIGN_UP,
-    username,
-    password,
-    email
+    type: SIGN_UP
   };
 };
 

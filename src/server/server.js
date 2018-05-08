@@ -47,9 +47,7 @@ app.get('*', (req, res, next) => {
   next();
 });
 
-
 app.post('/signup', (req, res) => {
-  
   let user = new User();
 
   user.username = req.body.username;
@@ -58,10 +56,23 @@ app.post('/signup', (req, res) => {
 
   // Save user in BDD
   user.save(err => {
-    if (err) res.send(err);
-    res.send({ message: 'User saved in BDD' });
+    if (err) {
+      if (err.name === 'ValidationError') {
+        /**
+         *  # TODO #
+         * Send all errors
+         */
+        for (field in err.errors) {
+          res.send({ error: err.errors[field].message });
+          break; // don't remove (avoid crash server 'cause of multiple response send)
+        }
+      } else if (err.name === 'BulkWriteError' && err.code === 11000) {
+        res.send({ error: 'Email or username already exists !' });
+      }
+    } else {
+      res.send({ message: 'User saved in BDD' });
+    }
   });
-
 });
 
 app.listen(process.env.PORT || port, () => {

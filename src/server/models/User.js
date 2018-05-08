@@ -8,17 +8,17 @@ const User = new Schema(
     username: {
       type: String,
       lowercase: true,
+      trim: true,
       required: [true, "can't be blank"],
-      minlength: 3,
-      maxlength: 10,
+      minlength: [3, 'username too short'],
+      maxlength: [10, 'username too long'],
       unique: true,
-      admin: Boolean,
-      unique: true
+      admin: Boolean
     },
     password: {
       type: String,
       required: [true, "can't be blank"],
-      minlength: 6
+      minlength: [6, 'password too short']
     },
     firstName: {
       type: String
@@ -28,7 +28,10 @@ const User = new Schema(
     },
     email: {
       type: String,
-      required: [true, "can't be blank"]
+      required: [true, "can't be blank"],
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+      unique: true,
+      trim: true
     },
     avatar: { type: Schema.Types.ObjectId, ref: 'Image' },
     favorites: Array,
