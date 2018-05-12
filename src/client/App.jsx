@@ -2,6 +2,7 @@ import './styles/_reset.scss';
 import React, { Component } from 'react';
 import axios from 'axios';
 import Header from './components/Header/HeaderContainer';
+import Home from './components/Home/Home';
 import Popin from './components/Popin/PopinContainer';
 
 class App extends Component {
@@ -13,6 +14,7 @@ class App extends Component {
     return (
       <div>
         <Header />
+        <Home />
         <Popin />
       </div>
     );

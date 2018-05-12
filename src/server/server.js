@@ -75,6 +75,26 @@ app.post('/signup', (req, res) => {
   });
 });
 
+app.get('/getFilters', (req, res) => {
+  const diets = [
+    'vegatarian',
+    'vegan',
+    'paleo',
+    'high-fiber',
+    'high-protein',
+    'low-carb',
+    'low-fat',
+    'low-sodium',
+    'low-sugar',
+    'alcohol-free',
+    'balanced'
+  ];
+
+  const allergies = ['gluten', 'dairy', 'eggs', 'soy ', 'wheat', 'fish', 'shellfish', 'tree nuts', 'peanuts'];
+
+  res.send({ diets, allergies });
+});
+
 app.listen(process.env.PORT || port, () => {
   console.log(`Serveur running on ${port}`);
 });

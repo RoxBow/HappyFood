@@ -11,22 +11,23 @@ export const signUp = e => {
   const password = e.target.password.value;
   const email = e.target.email.value;
 
-  axios
-    .post('/signup', {
-      username,
-      password,
-      email
-    })
-    .then(function(res) {
-      console.log(res);
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
+  return dispatch => {
+    axios
+      .post('/signup', {
+        username,
+        password,
+        email
+      })
+      .then(function(res) {
+        console.log(res);
+        dispatch({
+          type: SIGN_UP
+        })
+      }).catch(e => {
+        
+      });
 
-  return {
-    type: SIGN_UP
-  };
+  }
 };
 
 export const login = () => {
