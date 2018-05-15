@@ -1,11 +1,15 @@
 import '../../styles/_popin.scss';
-import React, { Component } from 'react';
-import FormSignUp from '../Form/FormContainer';
+import React from 'react';
+import FormSignUp from '../Form/FormSignupContainer';
+import FormLogin from '../Form/FormLoginContainer';
+import { LOGIN, SIGN_UP } from "../../constants";
 
 const renderContent = popinType => {
   switch (popinType) {
-    case 'SIGNUP':
+    case SIGN_UP:
       return <FormSignUp />;
+    case LOGIN:
+      return <FormLogin />;
     default:
       return false;
   }

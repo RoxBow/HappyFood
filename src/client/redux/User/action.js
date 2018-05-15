@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 export const SIGN_UP = 'SIGN_UP';
 export const LOGIN = 'LOGIN';
@@ -29,28 +29,26 @@ export const signUp = e => {
   };
 };
 
-export const login = (e) => {
-
+export const login = e => {
   e.preventDefault();
 
-  const id = e.target.username.value;
+  const username = e.target.username.value;
   const password = e.target.password.value;
-
 
   axios
     .post('/login', {
-      id,
+      username,
       password
     })
-    .then(function(res) {
-      var userId = res.data;
-      if (res.data) {
-        localStorage.setItem("userId",res.data);
-        var userData =  localStorage.getItem("userId");
+    .then( res => {
+      const idUser = res.data;
+      
+      if (idUser) {
+        localStorage.setItem("userId", idUser);
       }
     })
-    .catch(function(err) {
-      console.log('axios',err);
+    .catch( err => {
+      console.log('axios', err);
     });
 
   return {

@@ -3,11 +3,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
-const axios = require('axios');
 const cors = require('cors');
 
 const { urlMongoDB } = require('./dataServer');
-const { getProductBy } = require('./requestApi');
 
 const port = 3001; // set port server
 
@@ -77,23 +75,20 @@ app.post('/signup', (req, res) => {
 
 app.post('/login', (req, res) => {
 
-  id = req.body.id;
-  pwd = req.body.password;
+  const username = req.body.username;
+  const pwd = req.body.password;
 
-  var query = User.findOne({ 'username': id, 'password': pwd });
+  const query = User.findOne({ 'username': username, 'password': pwd });
   
   //select username & password field
   query.select('username password');
 
   // execute the query at a later time
-  query.exec(function (err, person) {
-    if (err) console.log('Erro server', err);
-    // Prints person value if matched"
-    if(person){
-      console.log({ message: 'OK', wo: person })
-      res.send(person.id)
-    } else{
-      console.log({ message: 'NOT OK' })
+  query.exec(function (err, user) {
+    if(user){
+      res.send(user.id);
+    } else {
+      res.send({ message: 'Error user login' });
     }
   });
 
