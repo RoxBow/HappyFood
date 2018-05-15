@@ -4,8 +4,11 @@ import { updateSearch } from '../../redux/SearchRecipe/action';
 import SearchRecipe from './SearchRecipe';
 
 const mapStateToProps = state => ({
-  textSearch: state.search,
-  filters: state.search
+  textSearch: state.search.text,
+  filters: {
+    diet: state.search.diet,
+    allergie: state.search.allergie
+  }
 });
 
 const mapDispatchToProps = dispatch => {

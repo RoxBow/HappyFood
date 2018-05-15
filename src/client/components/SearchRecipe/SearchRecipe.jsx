@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Filters from '../Filters/FiltersContainer';
+import axios from 'axios';
 
 const SearchRecipe = ({ textSearch, filters, updateSearch, toggleFilter }) => (
   <div className="searchRecipe">
@@ -12,11 +13,20 @@ const SearchRecipe = ({ textSearch, filters, updateSearch, toggleFilter }) => (
   </div>
 );
 
-const submitSearch = (e, textSearch, filters) => {
+const submitSearch = (e, textSearch, filters = {}) => {
   e.preventDefault();
 
-  console.log('TEXT SEARCH: ', textSearch);
-  console.log('Filters active: ', filters);
+  axios
+    .post('/searchRecipes', {
+        textSearch,
+        filters
+    })
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.log(error);
+    });
 };
 
 export default SearchRecipe;

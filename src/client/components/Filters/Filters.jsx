@@ -16,7 +16,7 @@ class Filters extends Component {
     const _this = this;
 
     axios
-      .get('/getFilters')
+      .get('/fetchFilters')
       .then(response => {
         _this.setState({
           diets: response.data.diets,

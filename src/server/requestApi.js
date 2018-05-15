@@ -1,60 +1,18 @@
-const qs = require('qs');
-
+const axios = require('axios');
 const { accountApi } = require('./dataServer');
 
-const setOptions = (method, dataUrl, url) => ({
-  method,
-  headers: { 'content-type': 'application/x-www-form-urlencoded' },
-  data: qs.stringify(dataUrl),
-  url
-});
-
-exports.getProductBy = (type, value) => {
+exports.getRecipeBySearch = (nameSearch, callback) => {
   let url;
-  let dataUrl = accountApi;
+  const { app_id, app_key } = accountApi;
 
-  switch (type) {
-    case 'category':
-      url = 'https://api.foodfacts.com/ci/api/foodfacts/food_products_per_category';
-      dataUrl.category = value;
-      break;
-    case 'searchTerm':
-      url = 'https://api.foodfacts.com/ci/api/foodfacts/food_products_per_search_term';
-      dataUrl.search_term = value;
-      break;
-    case 'productId':
-      url = 'https://api.foodfacts.com/ci/api/foodfacts/food_product_detail_information';
-      dataUrl.product_id = value;
-      break;
-    case 'upc':
-      url = 'https://api.foodfacts.com/ci/api/foodfacts/food_find_product_by_upc';
-      dataUrl.upc = value;
-      break;
-    default:
-      console.error('Please enter a correct type / value');
-  }
+  url = `https://api.edamam.com/search?q=${nameSearch}&app_id=${app_id}&app_key=${app_key}`;
 
-  const options = setOptions('POST', dataUrl, url);
-
-  axios(options).then(response => {
-    return response;
-  });
-};
-
-exports.getCategoryList = () => {
-  const url = 'https://api.foodfacts.com/ci/api/foodfacts/food_categories';
-  const options = setOptions('POST', dataUrl, url);
-
-  axios(options).then(response => {
-    return response;
-  });
-};
-
-exports.getSubCategoryList = () => {
-  const url = 'https://api.foodfacts.com/ci/api/foodfacts/food_sub_categories';
-  const options = setOptions('POST', dataUrl, url);
-
-  axios(options).then(response => {
-    return response;
-  });
+  axios
+    .get(url)
+    .then(res => {
+      callback(res.data.hits);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };

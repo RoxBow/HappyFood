@@ -7,7 +7,7 @@ const axios = require('axios');
 const cors = require('cors');
 
 const { urlMongoDB } = require('./dataServer');
-const { getProductBy } = require('./requestApi');
+const { getRecipeBySearch } = require('./requestApi');
 
 const port = 3001; // set port server
 
@@ -18,6 +18,7 @@ const port = 3001; // set port server
 
 /* # MODELS # */
 const User = require('./models/User');
+const Recipe = require('./models/Recipe');
 
 mongoose.connect(urlMongoDB);
 
@@ -75,24 +76,57 @@ app.post('/signup', (req, res) => {
   });
 });
 
-app.get('/getFilters', (req, res) => {
-  const diets = [
-    'vegatarian',
+app.get('/fetchFilters', (req, res) => {
+  /* TEST */
+  // getRecipeBySearch('salad', listResult => {
+  //   listResult.forEach(result => {
+  //     let recipe = new Recipe();
+
+  //     recipe.label = result.recipe.label;
+  //     recipe.description = '';
+  //     recipe.steps = result.recipe.ingredientLines;
+  //     recipe.ingredients = result.recipe.ingredients;
+  //     recipe.diets = result.recipe.dietLabels;
+  //     recipe.health = result.recipe.healthLabels;
+  //     recipe.calories = result.recipe.calories;
+  //     recipe.image = result.recipe.image;
+
+  //     recipe.save(err => {
+  //       if (err) console.log(err);
+  //       else console.log('All recipes saved in BDD');
+  //     });
+  //   });
+  // });
+
+  const diets = ['balanced', 'high-protein', 'high-fiber', 'low-fat', 'low-carb', 'low-sodium'];
+
+  const allergies = [
     'vegan',
+    'vegetarian',
     'paleo',
-    'high-fiber',
-    'high-protein',
-    'low-carb',
-    'low-fat',
-    'low-sodium',
+    'dairy-free',
+    'gluten-free',
+    'wheat-free',
+    'fat-free',
     'low-sugar',
-    'alcohol-free',
-    'balanced'
+    'egg-free',
+    'peanut-free',
+    'tree-nut-free',
+    'soy-free',
+    'fish-free',
+    'shellfish-free'
   ];
 
-  const allergies = ['gluten', 'dairy', 'eggs', 'soy ', 'wheat', 'fish', 'shellfish', 'tree nuts', 'peanuts'];
-
   res.send({ diets, allergies });
+});
+
+app.post('/searchRecipes', (req, res) => {
+  const textSearch = req.body.textSearch;
+  const filters = req.body.filters;
+
+  Recipe.find({ label: { $regex: textSearch, $options: 'i' } }, (err, recipe) => {
+    console.log(recipe);
+  });
 });
 
 app.listen(process.env.PORT || port, () => {

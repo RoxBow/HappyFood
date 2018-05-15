@@ -1,14 +1,29 @@
 'use strict';
 
-const Image = require('./Image');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+/**
+ * Our model -> api's model 
+ * label -> label
+ * description -> none 
+ * steps -> ingredientLines
+ * ingredients -> ingredients
+ * diets -> dietLabels
+ * health -> healthLabels
+ * calories -> calories
+ * image -> image
+ */
+
 const Recipe = new Schema({
-  title: String,
+  label: String,
   description: String,
+  steps: Array, 
   ingredients: Array,
-  img: { type: Schema.Types.ObjectId, ref: 'Image' }
+  diets: Array,
+  health: Array,
+  calories: String,
+  image: String,
 });
 
 module.exports = mongoose.model('Recipe', Recipe);
