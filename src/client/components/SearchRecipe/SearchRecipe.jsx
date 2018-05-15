@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Filters from '../Filters/FiltersContainer';
+import { setResultSearch } from '../../redux/SearchRecipe/action';
 import axios from 'axios';
 
-const SearchRecipe = ({ textSearch, filters, updateSearch, toggleFilter }) => (
+const SearchRecipe = ({ textSearch, filters, updateSearch, toggleFilter, setResultSearch }) => (
   <div className="searchRecipe">
-    <form onSubmit={e => submitSearch(e, textSearch, filters)}>
+    <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
       <label htmlFor="search">Search</label>
       <input type="text" id="search" onChange={e => updateSearch(e.target.value)} />
       <Filters />
@@ -13,19 +14,20 @@ const SearchRecipe = ({ textSearch, filters, updateSearch, toggleFilter }) => (
   </div>
 );
 
-const submitSearch = (e, textSearch, filters = {}) => {
+const submitSearch = (e, textSearch, filters, setResultSearch) => {
   e.preventDefault();
 
   axios
     .post('/searchRecipes', {
-        textSearch,
-        filters
+      textSearch,
+      filters,
     })
-    .then(response => {
-      console.log(response);
+    .then(res => {
+      const listRecipes = res.data;
+      setResultSearch(listRecipes);
     })
-    .catch(error => {
-      console.log(error);
+    .catch(err => {
+      console.log(err);
     });
 };
 

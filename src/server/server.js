@@ -78,7 +78,28 @@ app.post('/signup', (req, res) => {
 
 app.get('/fetchFilters', (req, res) => {
   /* TEST */
-  // getRecipeBySearch('salad', listResult => {
+<<<<<<< HEAD
+  getRecipeBySearch('chicken', listResult => {
+    listResult.forEach(result => {
+      let recipe = new Recipe();
+
+      recipe.label = result.recipe.label;
+      recipe.description = '';
+      recipe.steps = result.recipe.ingredientLines;
+      recipe.ingredients = result.recipe.ingredients;
+      recipe.diets = result.recipe.dietLabels;
+      recipe.health = result.recipe.healthLabels;
+      recipe.calories = result.recipe.calories;
+      recipe.image = result.recipe.image;
+
+      recipe.save(err => {
+        if (err) console.log(err);
+        else console.log('All recipes saved in BDD');
+      });
+    });
+  });
+=======
+  // getRecipeBySearch('chicken', listResult => {
   //   listResult.forEach(result => {
   //     let recipe = new Recipe();
 
@@ -97,6 +118,7 @@ app.get('/fetchFilters', (req, res) => {
   //     });
   //   });
   // });
+>>>>>>> d984cbf... Set/display result recipes
 
   const diets = ['balanced', 'high-protein', 'high-fiber', 'low-fat', 'low-carb', 'low-sodium'];
 
@@ -122,33 +144,31 @@ app.get('/fetchFilters', (req, res) => {
 
 app.post('/searchRecipes', (req, res) => {
   const textSearch = req.body.textSearch;
+  console.log(req.body.textSearch);
   const filters = req.body.filters;
 
   Recipe.find({ label: { $regex: textSearch, $options: 'i' } }, (err, recipe) => {
-    console.log(recipe);
+    res.send(recipe);
   });
 });
 
 app.post('/login', (req, res) => {
-
   const username = req.body.username;
   const pwd = req.body.password;
 
-  const query = User.findOne({ 'username': username, 'password': pwd });
+  const query = User.findOne({ username: username, password: pwd });
 
   //select username & password field
   query.select('username password');
 
   // execute the query at a later time
-  query.exec(function (err, user) {
-    if(user){
+  query.exec(function(err, user) {
+    if (user) {
       res.send(user.id);
     } else {
       res.send({ message: 'Error user login' });
     }
   });
-
-
 });
 
 app.listen(process.env.PORT || port, () => {

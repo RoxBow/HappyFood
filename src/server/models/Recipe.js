@@ -23,7 +23,7 @@ const Recipe = new Schema({
   diets: Array,
   health: Array,
   calories: String,
-  notes: Number,
+  note: Number,
   image: String
 });
 

@@ -2,7 +2,6 @@ import { SIGN_UP, LOGIN, LOGOUT } from './action';
 
 const initialState = {
   authenticated: false,
-  id: null
 };
 
 const userReducer = (state = initialState, action) => {
@@ -16,6 +15,9 @@ const userReducer = (state = initialState, action) => {
         authenticated: true
       });
     case LOGOUT:
+      return Object.assign({}, state, {
+        authenticated: false
+      });
     default:
       return state;
   }

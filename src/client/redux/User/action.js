@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { USER_ID } from '../../constants';
 
 export const SIGN_UP = 'SIGN_UP';
 export const LOGIN = 'LOGIN';
@@ -18,16 +19,13 @@ export const signUp = e => {
         password,
         email
       })
-      .then(function(res) {
-        console.log(res);
-        dispatch({
-          type: SIGN_UP
-        })
-      }).catch(e => {
-        
+      .then(res => {
+        dispatch({ type: SIGN_UP });
+      })
+      .catch(e => {
+        console.log(e);
       });
-
-  }
+  };
 };
 
 export const login = e => {
@@ -41,14 +39,14 @@ export const login = e => {
       username,
       password
     })
-    .then( res => {
+    .then(res => {
       const idUser = res.data;
-      
+
       if (idUser) {
-        localStorage.setItem("userId", idUser);
+        localStorage.setItem(USER_ID, idUser);
       }
     })
-    .catch( err => {
+    .catch(err => {
       console.log('axios', err);
     });
 
@@ -58,6 +56,8 @@ export const login = e => {
 };
 
 export const logout = () => {
+  localStorage.removeItem(USER_ID);
+
   return {
     type: LOGOUT
   };
