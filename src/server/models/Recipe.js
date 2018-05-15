@@ -8,7 +8,8 @@ const Recipe = new Schema({
   title: String,
   description: String,
   ingredients: Array,
-  img: { type: Schema.Types.ObjectId, ref: 'Image' }
+  img: { type: Schema.Types.ObjectId, ref: 'Image' },
+  notes: Number
 });
 
 module.exports = mongoose.model('Recipe', Recipe);

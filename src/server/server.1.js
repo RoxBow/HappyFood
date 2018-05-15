@@ -27,6 +27,25 @@ db.once('open', () => {
   console.log('Connected to database');
 });
 
+app.post('/login', (req, res) => {
+  console.log(req.body)
+  console.log('rro')
+  //id = req.body.identifier;
+  //pwd = req.body.password;
+
+  var query = User.findOne({ 'username': id, 'password': pwd });
+  
+  //select username & password field
+  query.select('username password');
+
+  // execute the query at a later time
+  query.exec(function (err, person) {
+    if (err) console.log('Erro server', err);
+    // Prints person value if matched"
+    console.log('Connection can be established', person);
+  });
+});
+
 // set cors module on server express
 app.use(cors());
 
@@ -73,31 +92,6 @@ app.post('/signup', (req, res) => {
       res.send({ message: 'User saved in BDD' });
     }
   });
-});
-
-app.post('/login', (req, res) => {
-
-  id = req.body.id;
-  pwd = req.body.password;
-
-  var query = User.findOne({ 'username': id, 'password': pwd });
-  
-  //select username & password field
-  query.select('username password');
-
-  // execute the query at a later time
-  query.exec(function (err, person) {
-    if (err) console.log('Erro server', err);
-    // Prints person value if matched"
-    if(person){
-      console.log({ message: 'OK', wo: person })
-      res.send(person.id)
-    } else{
-      console.log({ message: 'NOT OK' })
-    }
-  });
-
-  
 });
 
 app.listen(process.env.PORT || port, () => {

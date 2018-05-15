@@ -29,7 +29,30 @@ export const signUp = e => {
   };
 };
 
-export const login = () => {
+export const login = (e) => {
+
+  e.preventDefault();
+
+  const id = e.target.username.value;
+  const password = e.target.password.value;
+
+
+  axios
+    .post('/login', {
+      id,
+      password
+    })
+    .then(function(res) {
+      var userId = res.data;
+      if (res.data) {
+        localStorage.setItem("userId",res.data);
+        var userData =  localStorage.getItem("userId");
+      }
+    })
+    .catch(function(err) {
+      console.log('axios',err);
+    });
+
   return {
     type: LOGIN
   };
