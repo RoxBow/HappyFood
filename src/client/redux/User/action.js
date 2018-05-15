@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 export const SIGN_UP = 'SIGN_UP';
 export const LOGIN = 'LOGIN';
@@ -30,7 +30,28 @@ export const signUp = e => {
   }
 };
 
-export const login = () => {
+export const login = e => {
+  e.preventDefault();
+
+  const username = e.target.username.value;
+  const password = e.target.password.value;
+
+  axios
+    .post('/login', {
+      username,
+      password
+    })
+    .then( res => {
+      const idUser = res.data;
+      
+      if (idUser) {
+        localStorage.setItem("userId", idUser);
+      }
+    })
+    .catch( err => {
+      console.log('axios', err);
+    });
+
   return {
     type: LOGIN
   };

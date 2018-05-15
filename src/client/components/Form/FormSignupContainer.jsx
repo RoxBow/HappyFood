@@ -9,15 +9,15 @@ import FormSignUp from './FormSignup';
 const mapDispatchToProps = dispatch => {
   return {
     signUp: e => {
-      dispatch(signUp(e)),
-      dispatch(hidePopin())
+      dispatch(signUp(e));
+      dispatch(hidePopin());
     }
   };
 };
 
-const Form = connect(null, mapDispatchToProps)(FormSignUp);
+const FormSignupConnect = connect(null, mapDispatchToProps)(FormSignUp);
 
 export default reduxForm({
   form: 'signUp',
   validateForm
-})(Form);
+})(FormSignupConnect);

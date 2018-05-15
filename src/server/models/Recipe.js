@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 /**
- * Our model -> api's model 
+ * Our model -> api's model
  * label -> label
- * description -> none 
+ * description -> none
  * steps -> ingredientLines
  * ingredients -> ingredients
  * diets -> dietLabels
@@ -18,12 +18,13 @@ const Schema = mongoose.Schema;
 const Recipe = new Schema({
   label: String,
   description: String,
-  steps: Array, 
+  steps: Array,
   ingredients: Array,
   diets: Array,
   health: Array,
   calories: String,
-  image: String,
+  notes: Number,
+  image: String
 });
 
 module.exports = mongoose.model('Recipe', Recipe);

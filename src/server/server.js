@@ -129,6 +129,28 @@ app.post('/searchRecipes', (req, res) => {
   });
 });
 
+app.post('/login', (req, res) => {
+
+  const username = req.body.username;
+  const pwd = req.body.password;
+
+  const query = User.findOne({ 'username': username, 'password': pwd });
+
+  //select username & password field
+  query.select('username password');
+
+  // execute the query at a later time
+  query.exec(function (err, user) {
+    if(user){
+      res.send(user.id);
+    } else {
+      res.send({ message: 'Error user login' });
+    }
+  });
+
+
+});
+
 app.listen(process.env.PORT || port, () => {
   console.log(`Serveur running on ${port}`);
 });

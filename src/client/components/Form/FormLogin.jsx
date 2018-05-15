@@ -4,15 +4,14 @@ import React from 'react';
 import { Field } from 'redux-form';
 import Input from './Input';
 
-const FormSignUp = ({ signUp, submitting }) => (
-  <form onSubmit={signUp}>
+const FormLogin = ({ login, submitting }) => (
+  <form onSubmit={login}>
     <Field name="username" type="text" component={Input} label="Username" />
     <Field name="password" type="password" component={Input} label="Password" />
-    <Field name="email" type="email" component={Input} label="Email" />
     <button type="submit" disabled={submitting}>
-      Register
+        Connect
     </button>
   </form>
 );
 
-export default FormSignUp;
+export default FormLogin;
