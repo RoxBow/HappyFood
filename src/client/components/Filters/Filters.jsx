@@ -7,8 +7,8 @@ class Filters extends Component {
     super(props);
 
     this.state = {
-      diets: [],
-      allergies: []
+      dietsLabel: [],
+      healthLabels: []
     };
   }
 
@@ -19,12 +19,12 @@ class Filters extends Component {
       .get('/fetchFilters')
       .then(response => {
         _this.setState({
-          diets: response.data.diets,
-          allergies: response.data.allergies
+          dietsLabel: response.data.dietLabels,
+          healthLabels: response.data.healthLabels
         });
       })
-      .catch(error => {
-        console.log(error);
+      .catch(err => {
+        console.log(err);
       });
   }
 
@@ -52,13 +52,13 @@ class Filters extends Component {
 
   render() {
     const { toggleFilter } = this.props;
-    const { diets, allergies } = this.state;
+    const { dietsLabel, healthLabels } = this.state;
 
     return (
       <div className="filters">
         <h3>Filters</h3>
-        {this.renderListFilter(diets, 'Filter Diets', 'filterDiets', 'diet', toggleFilter)}
-        {this.renderListFilter(allergies, 'Filter Allergies', 'filterAllergie', 'allergie', toggleFilter)}
+        {this.renderListFilter(dietsLabel, 'Filter Diets', 'filterDiets', 'diet', toggleFilter)}
+        {this.renderListFilter(healthLabels, 'Filter Health', 'filterHealths', 'health', toggleFilter)}
       </div>
     );
   }

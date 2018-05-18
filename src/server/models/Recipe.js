@@ -20,8 +20,12 @@ const Recipe = new Schema({
   description: String,
   steps: Array,
   ingredients: Array,
-  diets: Array,
-  health: Array,
+  diets: {
+    type: [{ type: String, lowercase: true }]
+  },
+  health: {
+    type: [{ type: String, lowercase: true }]
+  },
   calories: String,
   note: Number,
   image: String

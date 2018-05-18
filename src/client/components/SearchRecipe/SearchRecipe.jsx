@@ -20,7 +20,7 @@ const submitSearch = (e, textSearch, filters, setResultSearch) => {
   axios
     .post('/searchRecipes', {
       textSearch,
-      filters,
+      filters
     })
     .then(res => {
       const listRecipes = res.data;

@@ -3,7 +3,7 @@ import { UPDATE_SEARCH, TOGGLE_FILTER, SET_RESULT_SEARCH } from './action';
 const initialState = {
   text: '',
   diet: [],
-  allergie: [],
+  health: [],
   result: []
 };
 

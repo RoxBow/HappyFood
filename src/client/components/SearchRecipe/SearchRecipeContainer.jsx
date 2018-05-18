@@ -7,7 +7,7 @@ const mapStateToProps = state => ({
   textSearch: state.search.text,
   filters: {
     diet: state.search.diet,
-    allergie: state.search.allergie
+    health: state.search.health
   }
 });
 

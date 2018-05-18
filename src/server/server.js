@@ -78,28 +78,7 @@ app.post('/signup', (req, res) => {
 
 app.get('/fetchFilters', (req, res) => {
   /* TEST */
-<<<<<<< HEAD
-  getRecipeBySearch('chicken', listResult => {
-    listResult.forEach(result => {
-      let recipe = new Recipe();
-
-      recipe.label = result.recipe.label;
-      recipe.description = '';
-      recipe.steps = result.recipe.ingredientLines;
-      recipe.ingredients = result.recipe.ingredients;
-      recipe.diets = result.recipe.dietLabels;
-      recipe.health = result.recipe.healthLabels;
-      recipe.calories = result.recipe.calories;
-      recipe.image = result.recipe.image;
-
-      recipe.save(err => {
-        if (err) console.log(err);
-        else console.log('All recipes saved in BDD');
-      });
-    });
-  });
-=======
-  // getRecipeBySearch('chicken', listResult => {
+  // getRecipeBySearch('salad', listResult => {
   //   listResult.forEach(result => {
   //     let recipe = new Recipe();
 
@@ -118,37 +97,71 @@ app.get('/fetchFilters', (req, res) => {
   //     });
   //   });
   // });
->>>>>>> d984cbf... Set/display result recipes
 
-  const diets = ['balanced', 'high-protein', 'high-fiber', 'low-fat', 'low-carb', 'low-sodium'];
+  const dietLabels = ['balanced', 'high-protein', 'high-fiber', 'low-fat', 'low-carb', 'low-sodium'];
 
-  const allergies = [
+  const healthLabels = [
     'vegan',
     'vegetarian',
     'paleo',
     'dairy-free',
     'gluten-free',
     'wheat-free',
-    'fat-free',
     'low-sugar',
     'egg-free',
     'peanut-free',
     'tree-nut-free',
     'soy-free',
     'fish-free',
-    'shellfish-free'
+    'shellfish-free',
+    'alcohol-free',
+    'celery-free',
+    'crustacean-free',
+    'kidney-friendly',
+    'kosher',
+    'low-potassium',
+    'lupine-free',
+    'mustard-free',
+    'no-oil-added',
+    'pescatarian',
+    'pork-free',
+    'red-meat-free',
+    'sesame-free',
+    'sugar-conscious'
   ];
 
-  res.send({ diets, allergies });
+  res.send({ dietLabels, healthLabels });
 });
 
 app.post('/searchRecipes', (req, res) => {
-  const textSearch = req.body.textSearch;
-  console.log(req.body.textSearch);
-  const filters = req.body.filters;
+  const { textSearch, filters } = req.body;
 
-  Recipe.find({ label: { $regex: textSearch, $options: 'i' } }, (err, recipe) => {
-    res.send(recipe);
+  Recipe.find(
+    {
+      $or: [
+        { label: { $regex: textSearch, $options: 'i' } },
+        { diet: { $in: filters.health } },
+        { health: { $in: filters.health } }
+      ]
+    },
+    (err, recipe) => {
+      res.send(recipe);
+    }
+  );
+});
+
+app.post('/randomRecipe', (req, res) => {
+  // Get the count of all recipes
+  Recipe.count().exec((err, count) => {
+    // Get a random entry
+    const random = Math.floor(Math.random() * count);
+
+    // Again query all recipes but only fetch one offset by our random
+    Recipe.findOne()
+      .skip(random)
+      .exec((err, randomRecipe) => {
+        res.send(randomRecipe);
+      });
   });
 });
 
