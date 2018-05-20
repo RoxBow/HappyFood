@@ -1,32 +1,31 @@
 @import './_variables.scss';
 
 header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
   background-image: url('../img/bg_header.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
 
   h1 {
-    font-family: $mainFont;
     font-size: 4rem;
     font-weight: bold;
+    text-align: center;
+    padding: 40px 0;
   }
 
-  & > ul {
+  .account-option {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     right: 0;
 
     li {
-      cursor: pointer;
       padding: 20px 15px;
       text-align: center;
+      cursor: pointer;
     }
 
     .login {
@@ -36,5 +35,35 @@ header {
     .register {
       background-color: #73577d;
     }
-  } // ul
+  } // account-option
+
+  .search-option {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+
+    li {
+      flex-grow: 1;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.2rem;
+      background-color: $mainColor;
+      color: $secondColor;
+      border-right: 2px solid $secondColor;
+      transition: all .3s;      
+      cursor: pointer;
+
+      &:last-of-type {
+        border-right: none;
+      }
+
+      &:hover {
+        color: $mainColor;
+        background-color: $secondColor;
+      }
+
+    } // search-option
+  }
 }

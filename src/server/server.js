@@ -11,18 +11,18 @@ const { getRecipeBySearch } = require('./requestApi');
 
 const port = 3001; // set port server
 
+/* # MODELS # */
+const User = require('./models/User');
+const Recipe = require('./models/Recipe');
+
 /*
   Add this line before express' response to set CORS header:
   res.header("Access-Control-Allow-Origin", "*");
 */
 
-/* # MODELS # */
-const User = require('./models/User');
-const Recipe = require('./models/Recipe');
-
 mongoose.connect(urlMongoDB);
-
 const db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'Error connect database'));
 db.once('open', () => {
   console.log('Connected to database');
@@ -77,7 +77,7 @@ app.post('/signup', (req, res) => {
 });
 
 app.get('/fetchFilters', (req, res) => {
-  /* TEST */
+  /* SAVE REQUEST IN OUR BDD */
   // getRecipeBySearch('salad', listResult => {
   //   listResult.forEach(result => {
   //     let recipe = new Recipe();
@@ -98,7 +98,14 @@ app.get('/fetchFilters', (req, res) => {
   //   });
   // });
 
-  const dietLabels = ['balanced', 'high-protein', 'high-fiber', 'low-fat', 'low-carb', 'low-sodium'];
+  const dietLabels = [
+    'balanced',
+    'high-protein',
+    'high-fiber',
+    'low-fat',
+    'low-carb',
+    'low-sodium'
+  ];
 
   const healthLabels = [
     'vegan',
@@ -150,6 +157,19 @@ app.post('/searchRecipes', (req, res) => {
   );
 });
 
+app.post('/searchRecipesByIngredients', (req, res) => {
+  const { ingredients } = req.body;
+
+  Recipe.find(
+    {
+      ingredients: { $in: filters.ingredients }
+    },
+    (err, recipe) => {
+      res.send(recipe);
+    }
+  );
+});
+
 app.post('/randomRecipe', (req, res) => {
   // Get the count of all recipes
   Recipe.count().exec((err, count) => {
@@ -166,8 +186,7 @@ app.post('/randomRecipe', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const username = req.body.username;
-  const pwd = req.body.password;
+  const { username, pwd } = req.body;
 
   const query = User.findOne({ username: username, password: pwd });
 
@@ -175,7 +194,7 @@ app.post('/login', (req, res) => {
   query.select('username password');
 
   // execute the query at a later time
-  query.exec(function(err, user) {
+  query.exec((err, user) => {
     if (user) {
       res.send(user.id);
     } else {

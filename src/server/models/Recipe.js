@@ -19,7 +19,9 @@ const Recipe = new Schema({
   label: String,
   description: String,
   steps: Array,
-  ingredients: Array,
+  ingredients: {
+    type: [{ type: String, lowercase: true }]
+  },
   diets: {
     type: [{ type: String, lowercase: true }]
   },

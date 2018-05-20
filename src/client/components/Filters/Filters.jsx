@@ -57,8 +57,8 @@ class Filters extends Component {
     return (
       <div className="filters">
         <h3>Filters</h3>
-        {this.renderListFilter(dietsLabel, 'Filter Diets', 'filterDiets', 'diet', toggleFilter)}
-        {this.renderListFilter(healthLabels, 'Filter Health', 'filterHealths', 'health', toggleFilter)}
+        {this.renderListFilter(dietsLabel, 'Diet', 'filterDiets', 'diet', toggleFilter)}
+        {this.renderListFilter(healthLabels, 'Health', 'filterHealths', 'health', toggleFilter)}
       </div>
     );
   }

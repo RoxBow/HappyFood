@@ -1,0 +1,29 @@
+@import './_variables.scss';
+
+html,
+body {
+  height: 100%;
+  font-family: $mainFont, 'Arial', sans-serif;
+}
+
+#root,
+#root > div {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+input,
+button {
+  border: none;
+}
+
+a {
+  color: inherit;
+}
+
+a, button, input[type="submit"] {
+  cursor: pointer;
+}

@@ -1,16 +1,38 @@
-import React, { Component } from 'react';
-import Filters from '../Filters/FiltersContainer';
-import { setResultSearch } from '../../redux/SearchRecipe/action';
+import '../../styles/_searchRecipe.scss';
+import React from 'react';
 import axios from 'axios';
+import { setResultSearch } from '../../redux/SearchRecipe/action';
+import Filters from '../Filters/FiltersContainer';
+import Recipes from '../Recipes/Recipes';
 
-const SearchRecipe = ({ textSearch, filters, updateSearch, toggleFilter, setResultSearch }) => (
-  <div className="searchRecipe">
+const SearchRecipe = ({
+  textSearch,
+  filters,
+  resultRecipes,
+  filtersIsOpen,
+  updateSearch,
+  toggleFilter,
+  toggleFilters,
+  setResultSearch
+}) => (
+  <div className="search-recipe">
     <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
-      <label htmlFor="search">Search</label>
-      <input type="text" id="search" onChange={e => updateSearch(e.target.value)} />
-      <Filters />
-      <input type="submit" value="submit" />
+      <div className="wrapper-search-bar">
+        <input
+          type="text"
+          className="input-search"
+          id="form-search-recipe"
+          placeholder="Search recipes"
+          onChange={e => updateSearch(e.target.value)}
+        />
+        <input type="submit" value="Search" />
+      </div>
+      <button type="button" onClick={toggleFilters} className="more">
+        + More
+      </button>
+      {filtersIsOpen && <Filters />}
     </form>
+    {resultRecipes && <Recipes recipes={resultRecipes} />}
   </div>
 );
 

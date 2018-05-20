@@ -1,4 +1,6 @@
 import './styles/_reset.scss';
+import './styles/_general.scss';
+import { BrowserRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import Header from './components/Header/HeaderContainer';
 import Home from './components/Home/Home';
@@ -11,11 +13,13 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <Header />
-        <Home />
-        <Popin />
-      </div>
+      <BrowserRouter>
+        <div>
+          <Header />
+          <Home />
+          <Popin />
+        </div>
+      </BrowserRouter>
     );
   }
 }

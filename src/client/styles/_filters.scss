@@ -1,2 +1,16 @@
-@import './_variables.scss';
+.filters {
+  & > div {
+    margin: 10px 0;
+  }
 
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+
+    li {
+      width: 33%;
+    }
+  }
+}
