@@ -8,12 +8,12 @@ Open project at http://localhost:3001/
 
 ## Techno ##
 - ParcelJs (TaskRunner)
-- React
+- ReactJS
 - Redux
 - Express
+- Redux-form
 - React-router
 - Mongoose
 
 ## TODO ##
-- [] Add recipe model
-- [] Add route to react
+- [] Link both API
