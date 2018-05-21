@@ -1,7 +1,7 @@
 import '../../styles/_filters.scss';
 import React, { Component } from 'react';
 import axios from 'axios';
-
+import Filter from './Filter';
 class Filters extends Component {
   constructor(props) {
     super(props);
@@ -28,37 +28,27 @@ class Filters extends Component {
       });
   }
 
-  renderListFilter(list, title, classList, classElement, toggleFilter) {
-    return (
-      <div>
-        <h3>{title}</h3>
-        <ul className={classList}>
-          {list.map((element, i) => (
-            <li className={classElement} key={i}>
-              <input
-                type="checkbox"
-                name={classElement}
-                value={element}
-                id={element}
-                onChange={e => toggleFilter(classElement, element, e.target.checked)}
-              />
-              <label htmlFor={element}>{element}</label>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-
   render() {
     const { toggleFilter } = this.props;
-    const { dietsLabel, healthLabels } = this.state;
-
+    const { dietsLabel, healthLabels, test } = this.state;
     return (
       <div className="filters">
         <h3>Filters</h3>
-        {this.renderListFilter(dietsLabel, 'Diet', 'filterDiets', 'diet', toggleFilter)}
-        {this.renderListFilter(healthLabels, 'Health', 'filterHealths', 'health', toggleFilter)}
+        <img src={test} />
+        <Filter
+          list={dietsLabel}
+          title="Diet"
+          classList="filterDiets"
+          classElement="diet"
+          toggleFilter={toggleFilter}
+        />
+        <Filter
+          list={healthLabels}
+          title="Health"
+          classList="filterHealths"
+          classElement="health"
+          toggleFilter={toggleFilter}
+        />
       </div>
     );
   }
