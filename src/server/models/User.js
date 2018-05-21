@@ -1,6 +1,7 @@
 'use strict';
-const Image = require('./Image');
+
 const mongoose = require('mongoose');
+const Image = require('./Image');
 const Schema = mongoose.Schema;
 
 const User = new Schema(

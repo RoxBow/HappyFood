@@ -40,9 +40,12 @@ const submitSearch = (e, textSearch, filters, setResultSearch) => {
   e.preventDefault();
 
   axios
-    .post('/searchRecipes', {
-      textSearch,
-      filters
+    .get('/api/searchRecipes', {
+      params: {
+        recipeName: textSearch,
+        diets: filters.diet,
+        health: filters.health,
+      }
     })
     .then(res => {
       const listRecipes = res.data;

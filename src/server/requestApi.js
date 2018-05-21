@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { accountApi } = require('./dataServer');
 
-exports.getRecipeBySearch = (nameSearch, callback) => {
+exports.fetchRecipeName = (nameSearch, callback) => {
   let url;
   const { app_id, app_key } = accountApi;
 

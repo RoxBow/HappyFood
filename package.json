@@ -30,7 +30,8 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "redux": "^4.0.0",
-    "redux-form": "^7.3.0"
+    "redux-form": "^7.3.0",
+    "request": "^2.86.0"
   },
   "devDependencies": {
     "babel-preset-env": "^1.6.1",

@@ -5,15 +5,18 @@ const path = require('path');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const cors = require('cors');
+const request = require('request').defaults({ encoding: null });
 
 const { urlMongoDB } = require('./dataServer');
 const { getRecipeBySearch } = require('./requestApi');
+const { convertToDataUrl } = require('./helpers/convertToDataUrl');
 
 const port = 3001; // set port server
 
 /* # MODELS # */
 const User = require('./models/User');
 const Recipe = require('./models/Recipe');
+const Image = require('./models/Image');
 
 /*
   Add this line before express' response to set CORS header:
@@ -42,58 +45,33 @@ app.use(
   })
 ); // for parsing application/x-www-form-urlencoded
 
-// Main page
-app.get('*', (req, res, next) => {
-  res.sendFile(path.resolve('./dist/index.html'));
-  next();
-});
-
-app.post('/signup', (req, res) => {
-  let user = new User();
-
-  user.username = req.body.username;
-  user.password = req.body.password;
-  user.email = req.body.email;
-
-  // Save user in BDD
-  user.save(err => {
-    if (err) {
-      if (err.name === 'ValidationError') {
-        /**
-         *  # TODO #
-         * Send all errors
-         */
-        for (field in err.errors) {
-          res.send({ error: err.errors[field].message });
-          break; // don't remove (avoid crash server 'cause of multiple response send)
-        }
-      } else if (err.name === 'BulkWriteError' && err.code === 11000) {
-        res.send({ error: 'Email or username already exists !' });
-      }
-    } else {
-      res.send({ message: 'User saved in BDD' });
-    }
-  });
-});
-
-app.get('/fetchFilters', (req, res) => {
+app.get('/fetchFilters', (req, res, next) => {
   /* SAVE REQUEST IN OUR BDD */
-  // getRecipeBySearch('salad', listResult => {
+  // fetchRecipeName('salad', listResult => {
   //   listResult.forEach(result => {
   //     let recipe = new Recipe();
+  //     let thumbRecipe = new Image();
 
   //     recipe.label = result.recipe.label;
   //     recipe.description = '';
   //     recipe.steps = result.recipe.ingredientLines;
-  //     recipe.ingredients = result.recipe.ingredients;
+  //     // recipe.ingredients = result.recipe.ingredients;
   //     recipe.diets = result.recipe.dietLabels;
   //     recipe.health = result.recipe.healthLabels;
   //     recipe.calories = result.recipe.calories;
-  //     recipe.image = result.recipe.image;
 
-  //     recipe.save(err => {
-  //       if (err) console.log(err);
-  //       else console.log('All recipes saved in BDD');
+  //     convertToDataUrl(result.recipe.image, (dataImage, contentType) => {
+  //       thumbRecipe.data = dataImage;
+  //       thumbRecipe.contentType = contentType;
+  //       recipe.image = thumbRecipe;
+
+  //       // save img of recipe
+  //       thumbRecipe.save();
+
+  //       recipe.save(err => {
+  //         if (err) console.log(err);
+  //         else console.log('All recipes saved in BDD');
+  //       });
   //     });
   //   });
   // });
@@ -136,28 +114,56 @@ app.get('/fetchFilters', (req, res) => {
     'sesame-free',
     'sugar-conscious'
   ];
-
-  res.send({ dietLabels, healthLabels });
 });
 
-app.post('/searchRecipes', (req, res) => {
-  const { textSearch, filters } = req.body;
+app.post('/signup', (req, res) => {
+  let user = new User();
+
+  user.username = req.body.username;
+  user.password = req.body.password;
+  user.email = req.body.email;
+
+  // Save user in BDD
+  user.save(err => {
+    if (err) {
+      if (err.name === 'ValidationError') {
+        /**
+         *  # TODO #
+         * Send all errors
+         */
+        for (field in err.errors) {
+          res.send({ error: err.errors[field].message });
+          break; // don't remove (avoid crash server 'cause of multiple response send)
+        }
+      } else if (err.name === 'BulkWriteError' && err.code === 11000) {
+        res.send({ error: 'Email or username already exists !' });
+      }
+    } else {
+      res.send({ message: 'User saved in BDD' });
+    }
+  });
+});
+
+app.get('/api/searchRecipes', (req, res) => {
+  let { recipeName, diets, health } = req.query;
+
+  const conditionSearch = [];
+
+  if (recipeName) conditionSearch.push({ label: { $regex: recipeName, $options: 'i' } });
+  if (diets) conditionSearch.push({ diets: { $in: diets } });
+  if (health) conditionSearch.push({ health: { $in: health } });
 
   Recipe.find(
     {
-      $or: [
-        { label: { $regex: textSearch, $options: 'i' } },
-        { diet: { $in: filters.health } },
-        { health: { $in: filters.health } }
-      ]
+      $or: conditionSearch
     },
     (err, recipe) => {
       res.send(recipe);
     }
-  );
+  ).populate('image');
 });
 
-app.post('/searchRecipesByIngredients', (req, res) => {
+app.post('/api/searchRecipesByIngredients', (req, res) => {
   const { ingredients } = req.body;
 
   Recipe.find(
@@ -170,7 +176,7 @@ app.post('/searchRecipesByIngredients', (req, res) => {
   );
 });
 
-app.post('/randomRecipe', (req, res) => {
+app.post('/api/randomRecipe', (req, res) => {
   // Get the count of all recipes
   Recipe.count().exec((err, count) => {
     // Get a random entry
@@ -201,6 +207,11 @@ app.post('/login', (req, res) => {
       res.send({ message: 'Error user login' });
     }
   });
+});
+
+// Execute at the end
+app.get('/*', (req, res) => {
+  res.sendFile(path.resolve('./dist/index.html'));
 });
 
 app.listen(process.env.PORT || port, () => {

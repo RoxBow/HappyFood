@@ -1,6 +1,6 @@
 'use strict';
-
 const mongoose = require('mongoose');
+const Image = require('./Image');
 const Schema = mongoose.Schema;
 
 /**
@@ -15,13 +15,18 @@ const Schema = mongoose.Schema;
  * image -> image
  */
 
+ 
 const Recipe = new Schema({
   label: String,
   description: String,
   steps: Array,
-  ingredients: {
-    type: [{ type: String, lowercase: true }]
-  },
+  // ingredients: [
+  //   {
+  //     text: String,
+  //     weight: String
+  //   }
+  //   type: [{ type: String, lowercase: true }]
+  // ],
   diets: {
     type: [{ type: String, lowercase: true }]
   },
@@ -30,7 +35,7 @@ const Recipe = new Schema({
   },
   calories: String,
   note: Number,
-  image: String
+  image: { type: Schema.Types.ObjectId, ref: 'Image' }
 });
 
 module.exports = mongoose.model('Recipe', Recipe);
