@@ -3,30 +3,12 @@ const mongoose = require('mongoose');
 const Image = require('./Image');
 const Schema = mongoose.Schema;
 
-/**
- * Our model -> api's model
- * label -> label
- * description -> none
- * steps -> ingredientLines
- * ingredients -> ingredients
- * diets -> dietLabels
- * health -> healthLabels
- * calories -> calories
- * image -> image
- */
-
- 
 const Recipe = new Schema({
   label: String,
   description: String,
+  category: String,
   steps: Array,
-  // ingredients: [
-  //   {
-  //     text: String,
-  //     weight: String
-  //   }
-  //   type: [{ type: String, lowercase: true }]
-  // ],
+  ingredients: Array,
   diets: {
     type: [{ type: String, lowercase: true }]
   },
@@ -35,6 +17,7 @@ const Recipe = new Schema({
   },
   calories: String,
   note: Number,
+  source: String,
   image: { type: Schema.Types.ObjectId, ref: 'Image' }
 });
 

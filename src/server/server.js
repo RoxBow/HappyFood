@@ -5,10 +5,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const cors = require('cors');
-const request = require('request').defaults({ encoding: null });
 
 const { urlMongoDB } = require('./dataServer');
-const { getRecipeBySearch } = require('./requestApi');
 const { convertToDataUrl } = require('./helpers/convertToDataUrl');
 
 const port = 3001; // set port server
@@ -46,36 +44,6 @@ app.use(
 ); // for parsing application/x-www-form-urlencoded
 
 app.get('/fetchFilters', (req, res, next) => {
-  /* SAVE REQUEST IN OUR BDD */
-  // fetchRecipeName('salad', listResult => {
-  //   listResult.forEach(result => {
-  //     let recipe = new Recipe();
-  //     let thumbRecipe = new Image();
-
-  //     recipe.label = result.recipe.label;
-  //     recipe.description = '';
-  //     recipe.steps = result.recipe.ingredientLines;
-  //     // recipe.ingredients = result.recipe.ingredients;
-  //     recipe.diets = result.recipe.dietLabels;
-  //     recipe.health = result.recipe.healthLabels;
-  //     recipe.calories = result.recipe.calories;
-
-  //     convertToDataUrl(result.recipe.image, (dataImage, contentType) => {
-  //       thumbRecipe.data = dataImage;
-  //       thumbRecipe.contentType = contentType;
-  //       recipe.image = thumbRecipe;
-
-  //       // save img of recipe
-  //       thumbRecipe.save();
-
-  //       recipe.save(err => {
-  //         if (err) console.log(err);
-  //         else console.log('All recipes saved in BDD');
-  //       });
-  //     });
-  //   });
-  // });
-
   const dietLabels = [
     'balanced',
     'high-protein',
@@ -114,6 +82,8 @@ app.get('/fetchFilters', (req, res, next) => {
     'sesame-free',
     'sugar-conscious'
   ];
+
+  res.send({ dietLabels, healthLabels });
 });
 
 app.post('/signup', (req, res) => {
@@ -145,7 +115,7 @@ app.post('/signup', (req, res) => {
 });
 
 app.get('/api/searchRecipes', (req, res) => {
-  let { recipeName, diets, health } = req.query;
+  let { recipeName, diets, health, isNotApi } = req.query;
 
   const conditionSearch = [];
 
@@ -153,22 +123,36 @@ app.get('/api/searchRecipes', (req, res) => {
   if (diets) conditionSearch.push({ diets: { $in: diets } });
   if (health) conditionSearch.push({ health: { $in: health } });
 
-  Recipe.find(
-    {
-      $or: conditionSearch
-    },
-    (err, recipe) => {
-      res.send(recipe);
-    }
-  ).populate('image');
+  // for web
+  if (isNotApi) {
+    Recipe.find(
+      {
+        $or: conditionSearch
+      },
+      (err, recipe) => {
+        res.send(recipe);
+      }
+    ).populate('image');
+  } else {
+    Recipe.find(
+      {
+        $or: conditionSearch
+      },
+      (err, recipe) => {
+        res.send(recipe);
+      }
+    );
+  }
 });
 
-app.post('/api/searchRecipesByIngredients', (req, res) => {
-  const { ingredients } = req.body;
+app.get('/api/searchRecipesByIngredients', (req, res) => {
+  const { ingredients } = req.query;
 
+  console.log(ingredients);
+  
   Recipe.find(
     {
-      ingredients: { $in: filters.ingredients }
+      ingredients: { $in: ingredients }
     },
     (err, recipe) => {
       res.send(recipe);
