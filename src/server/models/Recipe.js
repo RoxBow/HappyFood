@@ -8,7 +8,7 @@ const Recipe = new Schema({
   description: String,
   category: String,
   steps: Array,
-  ingredients: Array,
+  ingredients: [{ type: String, lowercase: true }],
   diets: {
     type: [{ type: String, lowercase: true }]
   },

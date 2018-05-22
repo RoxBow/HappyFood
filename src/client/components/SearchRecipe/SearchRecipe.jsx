@@ -45,8 +45,7 @@ const submitSearch = (e, textSearch, filters, setResultSearch) => {
         recipeName: textSearch,
         diets: filters.diet,
         health: filters.health,
-        isNotApi: false,
-        test: []
+        isNotApi: true
       }
     })
     .then(res => {

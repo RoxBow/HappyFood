@@ -7,8 +7,6 @@ const axios = require('axios');
 const cors = require('cors');
 
 const { urlMongoDB } = require('./dataServer');
-const { convertToDataUrl } = require('./helpers/convertToDataUrl');
-
 const port = 3001; // set port server
 
 /* # MODELS # */
@@ -150,7 +148,7 @@ app.get('/api/searchRecipesByIngredients', (req, res) => {
 
   Recipe.find(
     {
-      $or: conditionSearch
+      ingredients: { $in: ingredients }
     },
     (err, recipe) => {
       res.send(recipe);
@@ -163,18 +161,34 @@ app.get('/api/getRandomRecipe', (req, res) => {
   // let present = true
   // let recipeToSend = null
 
-  Recipe.count().exec((err, count) => {
-    // Get a random entry
-    const random = Math.floor(Math.random() * count);
+  const { isNotApi } = req.query;
 
-    // Again query all recipes but only fetch one offset by our random
-    Recipe.findOne()
-      .populate('image')
-      .skip(random)
-      .exec((err, randomRecipe) => {
-        res.send(randomRecipe);
-      });
-  });
+  if (isNotApi) {
+    Recipe.count().exec((err, count) => {
+      // Get a random entry
+      const random = Math.floor(Math.random() * count);
+
+      // Again query all recipes but only fetch one offset by our random
+      Recipe.findOne()
+        .populate('image')
+        .skip(random)
+        .exec((err, randomRecipe) => {
+          res.send(randomRecipe);
+        });
+    });
+  } else {
+    Recipe.count().exec((err, count) => {
+      // Get a random entry
+      const random = Math.floor(Math.random() * count);
+
+      // Again query all recipes but only fetch one offset by our random
+      Recipe.findOne()
+        .skip(random)
+        .exec((err, randomRecipe) => {
+          res.send(randomRecipe);
+        });
+    });
+  }
 
   /* if (allRandomRecipe === undefined) {
     Recipe.count().exec((err, count) => {
@@ -209,19 +223,6 @@ app.get('/api/getRandomRecipe', (req, res) => {
       });
 
     } */
-});
-
-app.post('/api/searchRecipesByIngredients', (req, res) => {
-  const { ingredients } = req.body;
-
-  Recipe.find(
-    {
-      ingredients: { $in: ingredients }
-    },
-    (err, recipe) => {
-      res.send(recipe);
-    }
-  );
 });
 
 app.post('/api/randomRecipe', (req, res) => {
