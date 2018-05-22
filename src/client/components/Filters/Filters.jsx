@@ -17,10 +17,10 @@ class Filters extends Component {
 
     axios
       .get('/fetchFilters')
-      .then(response => {
+      .then(res => {
         _this.setState({
-          dietsLabel: response.data.dietLabels,
-          healthLabels: response.data.healthLabels
+          dietsLabel: res.data.dietLabels,
+          healthLabels: res.data.healthLabels
         });
       })
       .catch(err => {
@@ -31,6 +31,7 @@ class Filters extends Component {
   render() {
     const { toggleFilter } = this.props;
     const { dietsLabel, healthLabels, test } = this.state;
+
     return (
       <div className="filters">
         <h3>Filters</h3>

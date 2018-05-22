@@ -2,21 +2,17 @@ import '../../styles/_searchRecipe.scss';
 import React from 'react';
 import axios from 'axios';
 import { setResultSearch } from '../../redux/SearchRecipe/action';
-import Filters from '../Filters/FiltersContainer';
 import Recipes from '../Recipes/Recipes';
 
-const SearchRecipe = ({
+const SearchWithIngredient = ({
   textSearch,
   filters,
   resultRecipes,
-  filtersIsOpen,
   updateSearch,
-  toggleFilter,
-  toggleFilters,
   setResultSearch
 }) => (
   <div className="search-recipe">
-    <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
+    <form onSubmit={e => submitSearch(e, textSearch, setResultSearch)}>
       <div className="wrapper-search-bar">
         <input
           type="text"
@@ -27,26 +23,20 @@ const SearchRecipe = ({
         />
         <input type="submit" value="Search" />
       </div>
-      <button type="button" onClick={toggleFilters} className="more">
-        + More
-      </button>
-      {filtersIsOpen && <Filters />}
     </form>
     {resultRecipes && <Recipes recipes={resultRecipes} />}
   </div>
 );
 
-const submitSearch = (e, textSearch, filters, setResultSearch) => {
+const submitSearch = (e, textSearch, setResultSearch) => {
   e.preventDefault();
 
+  const ingredients = textSearch.split(" ");
+
   axios
-    .get('/api/searchRecipes', {
+    .get('/api/searchRecipesByIngredients', {
       params: {
-        recipeName: textSearch,
-        diets: filters.diet,
-        health: filters.health,
-        isNotApi: false,
-        test: []
+        ingredients
       }
     })
     .then(res => {
@@ -58,4 +48,4 @@ const submitSearch = (e, textSearch, filters, setResultSearch) => {
     });
 };
 
-export default SearchRecipe;
+export default SearchWithIngredient;

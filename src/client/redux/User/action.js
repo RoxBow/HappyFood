@@ -12,11 +12,15 @@ export const signUp = e => {
   const password = e.target.password.value;
   const email = e.target.email.value;
 
-  axios.post('/signup', {
-    username,
-    password,
-    email
-  });
+  axios
+    .post('/signup', {
+      username,
+      password,
+      email
+    })
+    .catch(err => {
+      console.log(err);
+    });
 
   return {
     type: SIGN_UP

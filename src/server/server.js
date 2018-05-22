@@ -5,10 +5,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const cors = require('cors');
-const request = require('request').defaults({ encoding: null });
 
 const { urlMongoDB } = require('./dataServer');
-const { fetchRecipeName } = require('./requestApi');
 const { convertToDataUrl } = require('./helpers/convertToDataUrl');
 
 const port = 3001; // set port server
@@ -46,35 +44,6 @@ app.use(
 ); // for parsing application/x-www-form-urlencoded
 
 app.get('/fetchFilters', (req, res, next) => {
-  /* SAVE REQUEST IN OUR BDD */
-  // fetchRecipeName('chicken', listResult => {
-  //   listResult.forEach(result => {
-  //     let recipe = new Recipe();
-  //     let thumbRecipe = new Image();
-
-  //     recipe.label = result.recipe.label;
-  //     recipe.description = '';
-  //     recipe.steps = result.recipe.ingredientLines;
-  //     // recipe.ingredients = result.recipe.ingredients;
-  //     recipe.diets = result.recipe.dietLabels;
-  //     recipe.health = result.recipe.healthLabels;
-  //     recipe.calories = result.recipe.calories;
-
-  //     convertToDataUrl(result.recipe.image, (dataImage, contentType) => {
-  //       thumbRecipe.data = dataImage;
-  //       thumbRecipe.contentType = contentType;
-  //       recipe.image = thumbRecipe;
-
-  //       // save img of recipe
-  //       thumbRecipe.save();
-  //       recipe.save(err => {
-  //         if (err) console.log(err);
-  //         else console.log('All recipes saved in BDD');
-  //       });
-  //     });
-  //   });
-  // });
-
   const dietLabels = [
     'balanced',
     'high-protein',
@@ -114,7 +83,7 @@ app.get('/fetchFilters', (req, res, next) => {
     'sugar-conscious'
   ];
 
-  res.send({dietLabels, healthLabels})
+  res.send({ dietLabels, healthLabels });
 });
 
 app.post('/signup', (req, res) => {
@@ -146,13 +115,38 @@ app.post('/signup', (req, res) => {
 });
 
 app.get('/api/searchRecipes', (req, res) => {
-  let { recipeName, diets, health } = req.query;
+  let { recipeName, diets, health, isNotApi } = req.query;
 
   const conditionSearch = [];
 
   if (recipeName) conditionSearch.push({ label: { $regex: recipeName, $options: 'i' } });
   if (diets) conditionSearch.push({ diets: { $in: diets } });
   if (health) conditionSearch.push({ health: { $in: health } });
+
+  // for web
+  if (isNotApi) {
+    Recipe.find(
+      {
+        $or: conditionSearch
+      },
+      (err, recipe) => {
+        res.send(recipe);
+      }
+    ).populate('image');
+  } else {
+    Recipe.find(
+      {
+        $or: conditionSearch
+      },
+      (err, recipe) => {
+        res.send(recipe);
+      }
+    );
+  }
+});
+
+app.get('/api/searchRecipesByIngredients', (req, res) => {
+  const { ingredients } = req.query;
 
   Recipe.find(
     {
@@ -186,7 +180,7 @@ app.get('/api/getRandomRecipe', (req, res) => {
     Recipe.count().exec((err, count) => {
       // Get a random entry
       const random = Math.floor(Math.random() * count);
-  
+
       // Again query all recipes but only fetch one offset by our random
       Recipe.findOne()
         .skip(random)
@@ -200,12 +194,12 @@ app.get('/api/getRandomRecipe', (req, res) => {
       Recipe.count().exec((err, count) => {
         // Get a random entry
         const random = Math.floor(Math.random() * count);
-    
+
         // Again query all recipes but only fetch one offset by our random
         Recipe.findOne()
           .skip(random)
           .exec((err, randomRecipe) => {
-            
+
             allRandomRecipe.forEach(element =>{
               let nv = JSON.parse(element)
               console.log(randomRecipe.id == nv._id)
@@ -213,7 +207,7 @@ app.get('/api/getRandomRecipe', (req, res) => {
             res.send(randomRecipe);
           });
       });
-      
+
     } */
 });
 
@@ -222,7 +216,7 @@ app.post('/api/searchRecipesByIngredients', (req, res) => {
 
   Recipe.find(
     {
-      ingredients: { $in: filters.ingredients }
+      ingredients: { $in: ingredients }
     },
     (err, recipe) => {
       res.send(recipe);
