@@ -8,7 +8,7 @@ const cors = require('cors');
 const request = require('request').defaults({ encoding: null });
 
 const { urlMongoDB } = require('./dataServer');
-const { getRecipeBySearch } = require('./requestApi');
+const { fetchRecipeName } = require('./requestApi');
 const { convertToDataUrl } = require('./helpers/convertToDataUrl');
 
 const port = 3001; // set port server
@@ -47,7 +47,7 @@ app.use(
 
 app.get('/fetchFilters', (req, res, next) => {
   /* SAVE REQUEST IN OUR BDD */
-  // fetchRecipeName('salad', listResult => {
+  // fetchRecipeName('chicken', listResult => {
   //   listResult.forEach(result => {
   //     let recipe = new Recipe();
   //     let thumbRecipe = new Image();
@@ -67,7 +67,6 @@ app.get('/fetchFilters', (req, res, next) => {
 
   //       // save img of recipe
   //       thumbRecipe.save();
-
   //       recipe.save(err => {
   //         if (err) console.log(err);
   //         else console.log('All recipes saved in BDD');
@@ -114,6 +113,8 @@ app.get('/fetchFilters', (req, res, next) => {
     'sesame-free',
     'sugar-conscious'
   ];
+
+  res.send({dietLabels, healthLabels})
 });
 
 app.post('/signup', (req, res) => {
@@ -161,6 +162,59 @@ app.get('/api/searchRecipes', (req, res) => {
       res.send(recipe);
     }
   ).populate('image');
+});
+
+app.get('/api/getRandomRecipe', (req, res) => {
+  // const allRandomRecipe = req.query.oldRecipeHistory
+  // let present = true
+  // let recipeToSend = null
+
+  Recipe.count().exec((err, count) => {
+    // Get a random entry
+    const random = Math.floor(Math.random() * count);
+
+    // Again query all recipes but only fetch one offset by our random
+    Recipe.findOne()
+      .populate('image')
+      .skip(random)
+      .exec((err, randomRecipe) => {
+        res.send(randomRecipe);
+      });
+  });
+
+  /* if (allRandomRecipe === undefined) {
+    Recipe.count().exec((err, count) => {
+      // Get a random entry
+      const random = Math.floor(Math.random() * count);
+  
+      // Again query all recipes but only fetch one offset by our random
+      Recipe.findOne()
+        .skip(random)
+        .exec((err, randomRecipe) => {
+          res.send(randomRecipe);
+        });
+    });
+  } else{
+
+
+      Recipe.count().exec((err, count) => {
+        // Get a random entry
+        const random = Math.floor(Math.random() * count);
+    
+        // Again query all recipes but only fetch one offset by our random
+        Recipe.findOne()
+          .skip(random)
+          .exec((err, randomRecipe) => {
+            
+            allRandomRecipe.forEach(element =>{
+              let nv = JSON.parse(element)
+              console.log(randomRecipe.id == nv._id)
+            })
+            res.send(randomRecipe);
+          });
+      });
+      
+    } */
 });
 
 app.post('/api/searchRecipesByIngredients', (req, res) => {

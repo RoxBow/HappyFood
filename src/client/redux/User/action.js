@@ -12,19 +12,14 @@ export const signUp = e => {
   const password = e.target.password.value;
   const email = e.target.email.value;
 
-  return dispatch => {
-    axios
-      .post('/signup', {
-        username,
-        password,
-        email
-      })
-      .then(res => {
-        dispatch({ type: SIGN_UP });
-      })
-      .catch(e => {
-        console.log(e);
-      });
+  axios.post('/signup', {
+    username,
+    password,
+    email
+  });
+
+  return {
+    type: SIGN_UP
   };
 };
 

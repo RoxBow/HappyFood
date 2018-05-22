@@ -1,3 +1,5 @@
+const request = require('request').defaults({ encoding: null });
+
 exports.convertToDataUrl = (imgUrl, callback) => {
   request.get(imgUrl, (error, rep, body) => {
     if (!error && rep.statusCode === 200) {
