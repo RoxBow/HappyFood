@@ -12,7 +12,6 @@ const port = 3001; // set port server
 /* # MODELS # */
 const User = require('./models/User');
 const Recipe = require('./models/Recipe');
-const Image = require('./models/Image');
 
 /*
   Add this line before express' response to set CORS header:
@@ -31,6 +30,7 @@ db.once('open', () => {
 app.use(cors());
 
 // Load statics files
+app.use('/contrib', express.static(path.join(__dirname, 'contrib')))
 app.use(express.static('dist'));
 
 // Config bodyParser
@@ -121,8 +121,6 @@ app.get('/api/searchRecipes', (req, res) => {
   if (diets) conditionSearch.push({ diets: { $in: diets } });
   if (health) conditionSearch.push({ health: { $in: health } });
 
-  // for web
-  if (isNotApi) {
     Recipe.find(
       {
         $or: conditionSearch
@@ -131,16 +129,6 @@ app.get('/api/searchRecipes', (req, res) => {
         res.send(recipe);
       }
     ).populate('image');
-  } else {
-    Recipe.find(
-      {
-        $or: conditionSearch
-      },
-      (err, recipe) => {
-        res.send(recipe);
-      }
-    );
-  }
 });
 
 app.get('/api/searchRecipesByIngredients', (req, res) => {
@@ -161,9 +149,6 @@ app.get('/api/getRandomRecipe', (req, res) => {
   // let present = true
   // let recipeToSend = null
 
-  const { isNotApi } = req.query;
-
-  if (isNotApi) {
     Recipe.count().exec((err, count) => {
       // Get a random entry
       const random = Math.floor(Math.random() * count);
@@ -176,19 +161,6 @@ app.get('/api/getRandomRecipe', (req, res) => {
           res.send(randomRecipe);
         });
     });
-  } else {
-    Recipe.count().exec((err, count) => {
-      // Get a random entry
-      const random = Math.floor(Math.random() * count);
-
-      // Again query all recipes but only fetch one offset by our random
-      Recipe.findOne()
-        .skip(random)
-        .exec((err, randomRecipe) => {
-          res.send(randomRecipe);
-        });
-    });
-  }
 
   /* if (allRandomRecipe === undefined) {
     Recipe.count().exec((err, count) => {
@@ -223,21 +195,6 @@ app.get('/api/getRandomRecipe', (req, res) => {
       });
 
     } */
-});
-
-app.post('/api/randomRecipe', (req, res) => {
-  // Get the count of all recipes
-  Recipe.count().exec((err, count) => {
-    // Get a random entry
-    const random = Math.floor(Math.random() * count);
-
-    // Again query all recipes but only fetch one offset by our random
-    Recipe.findOne()
-      .skip(random)
-      .exec((err, randomRecipe) => {
-        res.send(randomRecipe);
-      });
-  });
 });
 
 app.post('/login', (req, res) => {

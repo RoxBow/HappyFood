@@ -7,3 +7,4 @@ dist
 yarn-error.log
 
 src/server/dataServer.js
+src/server/contrib/

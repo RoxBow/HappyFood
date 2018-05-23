@@ -18,3 +18,5 @@ Open project at http://localhost:3001/
 ## TODO ##
 - [] Link both API
 - [] Put recipe in favorit
+- [] Add default image recipe
+- [] Add security server & client side
