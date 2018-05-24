@@ -5,6 +5,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const cors = require('cors');
+const helmet = require('helmet');
 
 const { urlMongoDB } = require('./dataServer');
 const port = 3001; // set port server
@@ -26,10 +27,13 @@ db.once('open', () => {
   console.log('Connected to database');
 });
 
-// set cors module on server express
-app.use(cors());
+// set cors
+app.use(cors()); 
 
-// Load statics files
+// set helmet security
+app.use(helmet());
+
+// load statics files
 app.use('/contrib', express.static(path.join(__dirname, 'contrib')))
 app.use(express.static('dist'));
 
