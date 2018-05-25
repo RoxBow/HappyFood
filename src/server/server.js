@@ -108,6 +108,10 @@ app.get('/fetchFilters', (req, res, next) => {
   res.send({ dietLabels, healthLabels });
 });
 
+/**
+ * ### RECIPE ###
+ */
+
 app.get('/api/searchRecipes', (req, res) => {
   let { recipeName, diets, health, isNotApi } = req.query;
 
@@ -193,19 +197,37 @@ app.get('/api/getRandomRecipe', (req, res) => {
     } */
 });
 
+app.get('/getInformationRecipe', (req, res) => {
+  const { nameRecipe } = req.query;
+
+  Recipe.findOne({ 'label': nameRecipe }, (err, recipe) => {
+    if (err) return handleError(err);
+    res.send({ recipe });
+  }).populate('image');
+});
+
 /**
  * ### USER ###
  */
+
+// Restrict user access
+const checkAuthentication = (req,res,next) => {
+  if(req.isAuthenticated()){
+      //req.isAuthenticated() will return true if user is logged in
+      next();
+  } else{
+      res.redirect('/');
+  }
+}
 
 const redirects = {
   successRedirect: '/success',
   failureRedirect: '/failure'
 };
 
-app.post('/updateRecipeUser', (req, res) => {
+app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
   const { type, idRecipe } = req.body;
 
-  if(req.isAuthenticated()){
     User.findById(req.user.id, (err, user) => {
       if (err) return handleError(err);
 
@@ -214,18 +236,16 @@ app.post('/updateRecipeUser', (req, res) => {
       } else if(type === 'RECIPESDONE'){
         user.recipesDone.push(idRecipe);
       } else {
+        console.log('Type request recipe - not defined / not exist');
         return;
       }
 
       user.save();
     });
-  } else {
-    res.redirect('/');
-  }
 
 });
 
-app.post('/updateUser', (req, res) => {
+app.post('/updateUser', checkAuthentication, (req, res) => {
   User.findById(req.user.id, (err, user) => {
     if (err) return handleError(err);
     
@@ -237,16 +257,7 @@ app.post('/updateUser', (req, res) => {
   });
 });
 
-const checkAuthentication = (req,res,next) => {
-  if(req.isAuthenticated()){
-      //req.isAuthenticated() will return true if user is logged in
-      next();
-  } else{
-      console.log('Not authenticated');
-  }
-}
-
-app.get('/checkAuthentication', checkAuthentication, (req, res, next) => {
+app.get('/checkAuthentication', checkAuthentication, (req, res) => {
   if (req.user) {
     console.log('USER: ', req.user);
   } else {
@@ -256,7 +267,7 @@ app.get('/checkAuthentication', checkAuthentication, (req, res, next) => {
 
 app.get('/logout', (req, res) => {
   req.session.destroy( (err) => {
-    res.redirect('/'); //Inside a callback… bulletproof!
+    res.redirect('/');
   });
 });
 

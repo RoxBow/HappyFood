@@ -25,11 +25,7 @@ class RandomRecipe extends Component {
     const oldRecipeHistory = this.state.recipeHistory;
 
     axios
-      .get('/api/getRandomRecipe', {
-        params: {
-          isNotApi: true
-        }
-      })
+      .get('/api/getRandomRecipe')
       .then(response => {
         if (this.state.recipeHistory.length >= 10) {
           this.setState({

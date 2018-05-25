@@ -16,13 +16,20 @@ const SearchRecipe = ({
   setResultSearch
 }) => (
   <div className="search-recipe">
-
-  <div>
-    <button type='button' onClick={() => updateTest()}>UPDATE TEST</button>
-    <button type='button' onClick={() => checkLog()}>CHECK LOG</button>
-    <button type='button' onClick={() => logout()}>LOGOUT</button>
-    <button type='button' onClick={() => login()}>LOGIN</button>
-  </div>
+    <div>
+      <button type="button" onClick={() => updateTest()}>
+        UPDATE TEST
+      </button>
+      <button type="button" onClick={() => checkLog()}>
+        CHECK LOG
+      </button>
+      <button type="button" onClick={() => logout()}>
+        LOGOUT
+      </button>
+      <button type="button" onClick={() => login()}>
+        LOGIN
+      </button>
+    </div>
 
     <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
       <div className="wrapper-search-bar">
@@ -45,11 +52,10 @@ const SearchRecipe = ({
 );
 
 const updateTest = () => {
-  
   axios
     .post('/updateUser', {
-      firstName: 'Vincent',
-      lastName: 'deplais'
+      firstName: 'Pablo',
+      lastName: 'Escobar'
     })
     .then(res => {
       console.log(res);
@@ -57,10 +63,9 @@ const updateTest = () => {
     .catch(err => {
       console.log(err);
     });
-}
+};
 
 const logout = () => {
-  
   axios
     .get('/logout')
     .then(res => {
@@ -69,10 +74,9 @@ const logout = () => {
     .catch(err => {
       console.log(err);
     });
-}
+};
 
 const checkLog = () => {
-  
   axios
     .get('/checkAuthentication')
     .then(res => {
@@ -81,11 +85,9 @@ const checkLog = () => {
     .catch(err => {
       console.log(err);
     });
-}
-
+};
 
 const login = () => {
-  
   axios
     .get('/login')
     .then(res => {
@@ -94,7 +96,7 @@ const login = () => {
     .catch(err => {
       console.log(err);
     });
-}
+};
 
 const submitSearch = (e, textSearch, filters, setResultSearch) => {
   e.preventDefault();
@@ -104,8 +106,7 @@ const submitSearch = (e, textSearch, filters, setResultSearch) => {
       params: {
         recipeName: textSearch,
         diets: filters.diet,
-        health: filters.health,
-        isNotApi: true
+        health: filters.health
       }
     })
     .then(res => {
