@@ -5,7 +5,6 @@ const Image = require('./Image');
 const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
-const bcrypt = require('bcrypt');
 
 const User = new Schema(
   {
@@ -38,8 +37,8 @@ const User = new Schema(
       trim: true
     },
     avatar: { type: Schema.Types.ObjectId, ref: 'Image' },
-    favorites: Array,
-    recipesDone: Array
+    favorites: [{ type: String }],
+    recipesDone: [{ type: String }]
   },
   {
     timestamps: {
@@ -48,14 +47,6 @@ const User = new Schema(
     }
   }
 );
-
-User.methods.generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
-
-User.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.password);
-};
 
 User.plugin(passportLocalMongoose);
 

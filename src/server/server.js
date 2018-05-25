@@ -202,14 +202,28 @@ const redirects = {
   failureRedirect: '/failure'
 };
 
-const checkAuthentication = (req,res,next) => {
+app.post('/updateRecipeUser', (req, res) => {
+  const { type, idRecipe } = req.body;
+
   if(req.isAuthenticated()){
-      //req.isAuthenticated() will return true if user is logged in
-      next();
-  } else{
-      console.log('Not authenticated');
+    User.findById(req.user.id, (err, user) => {
+      if (err) return handleError(err);
+
+      if(type === 'FAVORITES'){
+        user.favorites.push(idRecipe);
+      } else if(type === 'RECIPESDONE'){
+        user.recipesDone.push(idRecipe);
+      } else {
+        return;
+      }
+
+      user.save();
+    });
+  } else {
+    res.redirect('/');
   }
-}
+
+});
 
 app.post('/updateUser', (req, res) => {
   User.findById(req.user.id, (err, user) => {
@@ -222,6 +236,15 @@ app.post('/updateUser', (req, res) => {
     user.save();
   });
 });
+
+const checkAuthentication = (req,res,next) => {
+  if(req.isAuthenticated()){
+      //req.isAuthenticated() will return true if user is logged in
+      next();
+  } else{
+      console.log('Not authenticated');
+  }
+}
 
 app.get('/checkAuthentication', checkAuthentication, (req, res, next) => {
   if (req.user) {

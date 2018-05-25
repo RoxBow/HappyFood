@@ -18,7 +18,6 @@ const SearchRecipe = ({
   <div className="search-recipe">
 
   <div>
-
     <button type='button' onClick={() => updateTest()}>UPDATE TEST</button>
     <button type='button' onClick={() => checkLog()}>CHECK LOG</button>
     <button type='button' onClick={() => logout()}>LOGOUT</button>
