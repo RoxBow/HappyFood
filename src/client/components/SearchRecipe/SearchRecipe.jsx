@@ -16,6 +16,15 @@ const SearchRecipe = ({
   setResultSearch
 }) => (
   <div className="search-recipe">
+
+  <div>
+
+    <button type='button' onClick={() => updateTest()}>UPDATE TEST</button>
+    <button type='button' onClick={() => checkLog()}>CHECK LOG</button>
+    <button type='button' onClick={() => logout()}>LOGOUT</button>
+    <button type='button' onClick={() => login()}>LOGIN</button>
+  </div>
+
     <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
       <div className="wrapper-search-bar">
         <input
@@ -35,6 +44,58 @@ const SearchRecipe = ({
     {resultRecipes && <Recipes recipes={resultRecipes} />}
   </div>
 );
+
+const updateTest = () => {
+  
+  axios
+    .post('/updateUser', {
+      firstName: 'Vincent',
+      lastName: 'deplais'
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+const logout = () => {
+  
+  axios
+    .get('/logout')
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+const checkLog = () => {
+  
+  axios
+    .get('/checkAuthentication')
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+
+const login = () => {
+  
+  axios
+    .get('/login')
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
 
 const submitSearch = (e, textSearch, filters, setResultSearch) => {
   e.preventDefault();

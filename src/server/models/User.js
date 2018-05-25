@@ -2,7 +2,10 @@
 
 const mongoose = require('mongoose');
 const Image = require('./Image');
+const passport = require('passport');
+const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
 const User = new Schema(
   {
@@ -18,7 +21,7 @@ const User = new Schema(
     },
     password: {
       type: String,
-      required: [true, "can't be blank"],
+      required: [false, "can't be blank"],
       minlength: [6, 'password too short']
     },
     firstName: {
@@ -29,7 +32,7 @@ const User = new Schema(
     },
     email: {
       type: String,
-      required: [true, "can't be blank"],
+      required: [false, "can't be blank"],
       match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
       unique: true,
       trim: true
@@ -45,5 +48,15 @@ const User = new Schema(
     }
   }
 );
+
+User.methods.generateHash = function(password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+User.methods.validPassword = function(password) {
+  return bcrypt.compareSync(password, this.password);
+};
+
+User.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('User', User);

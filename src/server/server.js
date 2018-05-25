@@ -6,8 +6,12 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 const cors = require('cors');
 const helmet = require('helmet');
+const session = require('express-session');
+const passport = require('passport'); 
+const LocalStrategy = require('passport-local').Strategy;
 
 const { urlMongoDB } = require('./dataServer');
+
 const port = 3001; // set port server
 
 /* # MODELS # */
@@ -36,6 +40,22 @@ app.use(helmet());
 // load statics files
 app.use('/contrib', express.static(path.join(__dirname, 'contrib')))
 app.use(express.static('dist'));
+
+app.use(session({
+  cookieName: 'session',
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// passport config
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Config bodyParser
 app.use(bodyParser.json()); // For parsing application/json
@@ -86,34 +106,6 @@ app.get('/fetchFilters', (req, res, next) => {
   ];
 
   res.send({ dietLabels, healthLabels });
-});
-
-app.post('/signup', (req, res) => {
-  let user = new User();
-
-  user.username = req.body.username;
-  user.password = req.body.password;
-  user.email = req.body.email;
-
-  // Save user in BDD
-  user.save(err => {
-    if (err) {
-      if (err.name === 'ValidationError') {
-        /**
-         *  # TODO #
-         * Send all errors
-         */
-        for (field in err.errors) {
-          res.send({ error: err.errors[field].message });
-          break; // don't remove (avoid crash server 'cause of multiple response send)
-        }
-      } else if (err.name === 'BulkWriteError' && err.code === 11000) {
-        res.send({ error: 'Email or username already exists !' });
-      }
-    } else {
-      res.send({ message: 'User saved in BDD' });
-    }
-  });
 });
 
 app.get('/api/searchRecipes', (req, res) => {
@@ -201,22 +193,71 @@ app.get('/api/getRandomRecipe', (req, res) => {
     } */
 });
 
-app.post('/login', (req, res) => {
-  const { username, pwd } = req.body;
+/**
+ * ### USER ###
+ */
 
-  const query = User.findOne({ username: username, password: pwd });
+const redirects = {
+  successRedirect: '/success',
+  failureRedirect: '/failure'
+};
 
-  //select username & password field
-  query.select('username password');
+const checkAuthentication = (req,res,next) => {
+  if(req.isAuthenticated()){
+      //req.isAuthenticated() will return true if user is logged in
+      next();
+  } else{
+      console.log('Not authenticated');
+  }
+}
 
-  // execute the query at a later time
-  query.exec((err, user) => {
-    if (user) {
-      res.send(user.id);
-    } else {
-      res.send({ message: 'Error user login' });
+app.post('/updateUser', (req, res) => {
+  User.findById(req.user.id, (err, user) => {
+    if (err) return handleError(err);
+    
+    for (const key in req.body) {
+      user[key] = req.body[key];
     }
+
+    user.save();
   });
+});
+
+app.get('/checkAuthentication', checkAuthentication, (req, res, next) => {
+  if (req.user) {
+    console.log('USER: ', req.user);
+  } else {
+    console.log('Problem user');
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy( (err) => {
+    res.redirect('/'); //Inside a callback… bulletproof!
+  });
+});
+
+app.post('/signup', (req, res, next) => {
+  const { username, email, password } = req.body
+
+  User.register(new User({ username, email }), password, (err, user) => {
+    if (err) console.log(err);
+    
+    passport.authenticate('local')(req, res, () => {
+      req.session.save( (err) => {
+        if (err) next(err);
+        res.send('User saved in BDD');
+      });
+    });
+  });
+});
+
+app.post('/login', passport.authenticate('local', redirects), (req, res) => {
+  if ( req.session.passport.user != null ) {
+    console.log('You correctly log in');
+  } else {
+    console.log('ERROR USER NOT EXIST');
+  }
 });
 
 // Execute at the end
