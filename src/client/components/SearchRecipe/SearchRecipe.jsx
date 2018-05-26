@@ -23,9 +23,6 @@ const SearchRecipe = ({
       <button type="button" onClick={() => logout()}>
         LOGOUT
       </button>
-      <button type="button" onClick={() => login()}>
-        LOGIN
-      </button>
     </div>
 
     <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
@@ -65,17 +62,6 @@ const updateTest = () => {
 const logout = () => {
   axios
     .get('/logout')
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
-const login = () => {
-  axios
-    .get('/login')
     .then(res => {
       console.log(res);
     })

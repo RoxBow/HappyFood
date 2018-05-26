@@ -4,6 +4,7 @@ import { USER_ID } from '../../constants';
 export const SIGN_UP = 'SIGN_UP';
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
+export const SET_AUTHENTICATION = 'SET_AUTHENTICATION';
 
 export const signUp = e => {
   e.preventDefault();
@@ -38,15 +39,8 @@ export const login = e => {
       username,
       password
     })
-    .then(res => {
-      const idUser = res.data;
-
-      if (idUser) {
-        localStorage.setItem(USER_ID, idUser);
-      }
-    })
     .catch(err => {
-      console.log('axios', err);
+      console.log('login error: ', err);
     });
 
   return {
@@ -54,9 +48,14 @@ export const login = e => {
   };
 };
 
-export const logout = () => {
-  localStorage.removeItem(USER_ID);
+export const setAuthentication = isAuthenticated => {
+  return {
+    type: SET_AUTHENTICATION,
+    isAuthenticated
+  };
+};
 
+export const logout = () => {
   return {
     type: LOGOUT
   };

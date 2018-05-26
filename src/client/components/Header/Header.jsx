@@ -7,6 +7,9 @@ const Header = ({ signUp, showPopin }) => (
   <header>
     <h1>HappyFood</h1>
     <ul className="account-option">
+      <li>
+        <Link to="/user/me">Go to profile</Link>
+      </li>
       <li className="login" onClick={() => showPopin(LOGIN)}>
         Login
       </li>

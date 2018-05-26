@@ -213,7 +213,6 @@ app.get('/getInformationRecipe', (req, res) => {
 
 // Restrict user access
 const checkAuthentication = (req, res, next) => {
-  console.log('isAuthenticateeeed: ',req.isAuthenticated())
   if (req.isAuthenticated()) {
     //req.isAuthenticated() will return true if user is logged in
     next();
@@ -227,6 +226,14 @@ const redirects = {
   successRedirect: '/success',
   failureRedirect: '/failure'
 };
+
+app.get('/fetchUserInformation', checkAuthentication,(req, res) => {
+
+  User.findById(req.user.id, (err, user) => {
+    if (err) return handleError(err);
+    res.send({ user });
+  }).populate('avatar');
+});
 
 app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
   const { type, idRecipe } = req.body;
@@ -265,7 +272,12 @@ app.get('/logout', (req, res) => {
   });
 });
 
-app.post('/signup', (req, res, next) => {
+app.get('/checkUserAuthentication', (req, res) => {
+  const isAuthenticated = req.isAuthenticated();
+  res.send({ isAuthenticated });
+});
+
+app.post('/signup',(req, res) => {
   const { username, email, password } = req.body;
 
   User.register(new User({ username, email }), password, (err, user) => {
@@ -274,6 +286,7 @@ app.post('/signup', (req, res, next) => {
     passport.authenticate('local')(req, res, () => {
       req.session.save(err => {
         if (err) console.log(err);
+        res.redirect('/');
       });
     });
   });
