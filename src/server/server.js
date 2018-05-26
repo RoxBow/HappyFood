@@ -7,7 +7,7 @@ const axios = require('axios');
 const cors = require('cors');
 const helmet = require('helmet');
 const session = require('express-session');
-const passport = require('passport'); 
+const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const { urlMongoDB } = require('./dataServer');
@@ -32,25 +32,26 @@ db.once('open', () => {
 });
 
 // set cors
-app.use(cors()); 
+app.use(cors());
 
 // set helmet security
 app.use(helmet());
 
 // load statics files
-app.use('/contrib', express.static(path.join(__dirname, 'contrib')))
+app.use('/contrib', express.static(path.join(__dirname, 'contrib')));
 app.use(express.static('dist'));
 
-app.use(session({
-  cookieName: 'session',
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    cookieName: 'session',
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // passport config
 passport.use(new LocalStrategy(User.authenticate()));
@@ -121,14 +122,14 @@ app.get('/api/searchRecipes', (req, res) => {
   if (diets) conditionSearch.push({ diets: { $in: diets } });
   if (health) conditionSearch.push({ health: { $in: health } });
 
-    Recipe.find(
-      {
-        $or: conditionSearch
-      },
-      (err, recipe) => {
-        res.send(recipe);
-      }
-    ).populate('image');
+  Recipe.find(
+    {
+      $or: conditionSearch
+    },
+    (err, recipe) => {
+      res.send(recipe);
+    }
+  ).populate('image');
 });
 
 app.get('/api/searchRecipesByIngredients', (req, res) => {
@@ -149,18 +150,18 @@ app.get('/api/getRandomRecipe', (req, res) => {
   // let present = true
   // let recipeToSend = null
 
-    Recipe.count().exec((err, count) => {
-      // Get a random entry
-      const random = Math.floor(Math.random() * count);
+  Recipe.count().exec((err, count) => {
+    // Get a random entry
+    const random = Math.floor(Math.random() * count);
 
-      // Again query all recipes but only fetch one offset by our random
-      Recipe.findOne()
-        .populate('image')
-        .skip(random)
-        .exec((err, randomRecipe) => {
-          res.send(randomRecipe);
-        });
-    });
+    // Again query all recipes but only fetch one offset by our random
+    Recipe.findOne()
+      .populate('image')
+      .skip(random)
+      .exec((err, randomRecipe) => {
+        res.send(randomRecipe);
+      });
+  });
 
   /* if (allRandomRecipe === undefined) {
     Recipe.count().exec((err, count) => {
@@ -200,7 +201,7 @@ app.get('/api/getRandomRecipe', (req, res) => {
 app.get('/getInformationRecipe', (req, res) => {
   const { nameRecipe } = req.query;
 
-  Recipe.findOne({ 'label': nameRecipe }, (err, recipe) => {
+  Recipe.findOne({ label: nameRecipe }, (err, recipe) => {
     if (err) return handleError(err);
     res.send({ recipe });
   }).populate('image');
@@ -211,14 +212,16 @@ app.get('/getInformationRecipe', (req, res) => {
  */
 
 // Restrict user access
-const checkAuthentication = (req,res,next) => {
-  if(req.isAuthenticated()){
-      //req.isAuthenticated() will return true if user is logged in
-      next();
-  } else{
-      res.redirect('/');
+const checkAuthentication = (req, res, next) => {
+  console.log('isAuthenticateeeed: ',req.isAuthenticated())
+  if (req.isAuthenticated()) {
+    //req.isAuthenticated() will return true if user is logged in
+    next();
+  } else {
+    console.log('Not authenticated');
+    res.redirect('/');
   }
-}
+};
 
 const redirects = {
   successRedirect: '/success',
@@ -228,27 +231,26 @@ const redirects = {
 app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
   const { type, idRecipe } = req.body;
 
-    User.findById(req.user.id, (err, user) => {
-      if (err) return handleError(err);
+  User.findById(req.user.id, (err, user) => {
+    if (err) return handleError(err);
 
-      if(type === 'FAVORITES'){
-        user.favorites.push(idRecipe);
-      } else if(type === 'RECIPESDONE'){
-        user.recipesDone.push(idRecipe);
-      } else {
-        console.log('Type request recipe - not defined / not exist');
-        return;
-      }
+    if (type === 'FAVORITES') {
+      user.favorites.push(idRecipe);
+    } else if (type === 'RECIPESDONE') {
+      user.recipesDone.push(idRecipe);
+    } else {
+      console.log('Type request recipe - not defined / not exist');
+      return;
+    }
 
-      user.save();
-    });
-
+    user.save();
+  });
 });
 
 app.post('/updateUser', checkAuthentication, (req, res) => {
   User.findById(req.user.id, (err, user) => {
     if (err) return handleError(err);
-    
+
     for (const key in req.body) {
       user[key] = req.body[key];
     }
@@ -257,40 +259,32 @@ app.post('/updateUser', checkAuthentication, (req, res) => {
   });
 });
 
-app.get('/checkAuthentication', checkAuthentication, (req, res) => {
-  if (req.user) {
-    console.log('USER: ', req.user);
-  } else {
-    console.log('Problem user');
-  }
-});
-
 app.get('/logout', (req, res) => {
-  req.session.destroy( (err) => {
+  req.session.destroy(err => {
     res.redirect('/');
   });
 });
 
 app.post('/signup', (req, res, next) => {
-  const { username, email, password } = req.body
+  const { username, email, password } = req.body;
 
   User.register(new User({ username, email }), password, (err, user) => {
     if (err) console.log(err);
-    
+
     passport.authenticate('local')(req, res, () => {
-      req.session.save( (err) => {
-        if (err) next(err);
-        res.send('User saved in BDD');
+      req.session.save(err => {
+        if (err) console.log(err);
       });
     });
   });
 });
 
-app.post('/login', passport.authenticate('local', redirects), (req, res) => {
-  if ( req.session.passport.user != null ) {
+app.post('/login', passport.authenticate('local'), (req, res) => {
+  if (req.session.passport.user != null) {
     console.log('You correctly log in');
+    res.redirect('/');
   } else {
-    console.log('ERROR USER NOT EXIST');
+    console.log('Problem user');
   }
 });
 

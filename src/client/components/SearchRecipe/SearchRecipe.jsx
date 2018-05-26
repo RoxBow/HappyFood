@@ -20,9 +20,6 @@ const SearchRecipe = ({
       <button type="button" onClick={() => updateTest()}>
         UPDATE TEST
       </button>
-      <button type="button" onClick={() => checkLog()}>
-        CHECK LOG
-      </button>
       <button type="button" onClick={() => logout()}>
         LOGOUT
       </button>
@@ -54,7 +51,7 @@ const SearchRecipe = ({
 const updateTest = () => {
   axios
     .post('/updateUser', {
-      firstName: 'Pablo',
+      firstName: 'Allo',
       lastName: 'Escobar'
     })
     .then(res => {
@@ -68,17 +65,6 @@ const updateTest = () => {
 const logout = () => {
   axios
     .get('/logout')
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
-const checkLog = () => {
-  axios
-    .get('/checkAuthentication')
     .then(res => {
       console.log(res);
     })
