@@ -1,8 +1,9 @@
 import '../../styles/_randomRecipe.scss';
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-class RandomRecipe extends Component {
+class RandomRecipe extends React.Component {
   constructor() {
     super();
     this.state = {

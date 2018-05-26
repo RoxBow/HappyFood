@@ -1,6 +1,6 @@
 import '../../styles/_header.scss';
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LOGIN, SIGN_UP } from '../../constants';
 
 const Header = ({ signUp, showPopin }) => (

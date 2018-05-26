@@ -1,14 +1,15 @@
 import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Recipes = ({ recipes }) => {
   return (
     <ul className="recipes">
       {recipes.map((recipe, i) => (
         <li key={i}>
-          <a href={`/recipe/${recipe.label}`}>
+          <Link to={`/recipe/${recipe.label}`}>
             <img src={recipe.image.path} alt={recipe.label} />
-          </a>
+          </Link>
           <button onClick={() => updateRecipeUser('FAVORITES', recipe._id)}>
             Add to my favorite
           </button>

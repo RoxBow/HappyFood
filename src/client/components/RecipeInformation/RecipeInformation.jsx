@@ -31,7 +31,7 @@ class RecipeInformation extends React.Component {
     return (
       <div>
         <h3>{title}</h3>
-        <ul>{list.map((element,i) => <li key={i}>{element}</li>)}</ul>
+        <ul>{list.map((element, i) => <li key={i}>{element}</li>)}</ul>
       </div>
     );
   }
