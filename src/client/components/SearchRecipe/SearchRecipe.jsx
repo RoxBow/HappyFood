@@ -1,49 +1,75 @@
 import '../../styles/_searchRecipe.scss';
 import React from 'react';
 import axios from 'axios';
-import { setResultSearch } from '../../redux/SearchRecipe/action';
 import Filters from '../Filters/FiltersContainer';
 import Recipes from '../Recipes/Recipes';
 
-const SearchRecipe = ({
-  textSearch,
-  filters,
-  resultRecipes,
-  filtersIsOpen,
-  updateSearch,
-  toggleFilter,
-  toggleFilters,
-  setResultSearch
-}) => (
-  <div className="search-recipe">
-    <div>
-      <button type="button" onClick={() => updateTest()}>
-        UPDATE TEST
-      </button>
-      <button type="button" onClick={() => logout()}>
-        LOGOUT
-      </button>
-    </div>
+class SearchRecipe extends React.Component {
+  constructor(props) {
+    super(props);
 
-    <form onSubmit={e => submitSearch(e, textSearch, filters, setResultSearch)}>
-      <div className="wrapper-search-bar">
-        <input
-          type="text"
-          className="input-search"
-          id="form-search-recipe"
-          placeholder="Search recipes"
-          onChange={e => updateSearch(e.target.value)}
-        />
-        <input type="submit" value="Search" />
+    this.state = {};
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+    const { textSearch, filters } = this.props;
+
+    axios
+      .get('/api/searchRecipes', {
+        params: {
+          recipeName: textSearch,
+          diets: filters.diet,
+          health: filters.health
+        }
+      })
+      .then(res => {
+        const listRecipes = res.data;
+        this.setState({ resultRecipes: listRecipes });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    const { resultRecipes } = this.state;
+    const { filtersIsOpen, updateSearch, toggleFilters } = this.props;
+
+    return (
+      <div className="search-recipe">
+        <div>
+          <button type="button" onClick={() => updateTest()}>
+            UPDATE TEST
+          </button>
+          <button type="button" onClick={() => logout()}>
+            LOGOUT
+          </button>
+        </div>
+
+        <form onSubmit={e => this.handleSubmit(e)}>
+          <div className="wrapper-search-bar">
+            <input
+              type="text"
+              className="input-search"
+              id="form-search-recipe"
+              placeholder="Search recipes"
+              onChange={e => updateSearch(e.target.value)}
+            />
+            <input type="submit" value="Search" />
+          </div>
+          <button type="button" onClick={toggleFilters} className="more">
+            + More
+          </button>
+          {filtersIsOpen && <Filters />}
+        </form>
+        {resultRecipes && <Recipes recipes={resultRecipes} />}
       </div>
-      <button type="button" onClick={toggleFilters} className="more">
-        + More
-      </button>
-      {filtersIsOpen && <Filters />}
-    </form>
-    {resultRecipes && <Recipes recipes={resultRecipes} />}
-  </div>
-);
+    );
+  }
+}
 
 const updateTest = () => {
   axios
@@ -64,26 +90,6 @@ const logout = () => {
     .get('/logout')
     .then(res => {
       console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
-const submitSearch = (e, textSearch, filters, setResultSearch) => {
-  e.preventDefault();
-
-  axios
-    .get('/api/searchRecipes', {
-      params: {
-        recipeName: textSearch,
-        diets: filters.diet,
-        health: filters.health
-      }
-    })
-    .then(res => {
-      const listRecipes = res.data;
-      setResultSearch(listRecipes);
     })
     .catch(err => {
       console.log(err);

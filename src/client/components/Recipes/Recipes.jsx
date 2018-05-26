@@ -29,9 +29,6 @@ const updateRecipeUser = (type, idRecipe) => {
       type,
       idRecipe
     })
-    .then(res => {
-      console.log(res);
-    })
     .catch(err => {
       console.log(err);
     });

@@ -27,11 +27,6 @@ const filterReducer = (state = initialState, action) => {
         ...state,
         filtersIsOpen: !state.filtersIsOpen
       };
-    case SET_RESULT_SEARCH:
-      return {
-        ...state,
-        result: action.result
-      };
     default:
       return state;
   }

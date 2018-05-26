@@ -4,6 +4,7 @@ const path = require('path');
 
 exports.downloadImage = (uri, filename, callback) => {
   request.head(uri, (err, res, body) => {
+    // absolutePath use to create file to correct folder
     const absolutePath = path.join(__dirname, '../contrib/'); 
     
     const extension = res.headers['content-type'].split('/')[1];
@@ -11,7 +12,7 @@ exports.downloadImage = (uri, filename, callback) => {
     const typeFile = res.headers['content-type'];
     const pathSrcImg = path.join('./contrib', filename+'.'+extension); 
 
-    let completePath = absolutePath + filename + '.' + extension;
+    const completePath = absolutePath + filename + '.' + extension;
     
     if (fs.existsSync(completePath)) {
       console.error('path already exist')

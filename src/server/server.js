@@ -62,7 +62,8 @@ passport.deserializeUser(User.deserializeUser());
 app.use(bodyParser.json()); // For parsing application/json
 app.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
+    limit: '50mb'
   })
 ); // for parsing application/x-www-form-urlencoded
 

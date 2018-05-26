@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { USER_ID } from '../../constants';
 
 export const SIGN_UP = 'SIGN_UP';
 export const LOGIN = 'LOGIN';
