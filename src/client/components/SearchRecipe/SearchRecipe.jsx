@@ -44,9 +44,6 @@ class SearchRecipe extends React.Component {
           <button type="button" onClick={() => updateTest()}>
             UPDATE TEST
           </button>
-          <button type="button" onClick={() => logout()}>
-            LOGOUT
-          </button>
         </div>
 
         <form onSubmit={e => this.handleSubmit(e)}>
@@ -77,17 +74,6 @@ const updateTest = () => {
       firstName: 'Allo',
       lastName: 'Escobar'
     })
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
-const logout = () => {
-  axios
-    .get('/logout')
     .then(res => {
       console.log(res);
     })

@@ -18,11 +18,6 @@ const User = new Schema(
       unique: true,
       admin: Boolean
     },
-    password: {
-      type: String,
-      required: [false, "can't be blank"],
-      minlength: [6, 'password too short']
-    },
     firstName: {
       type: String
     },
@@ -31,7 +26,7 @@ const User = new Schema(
     },
     email: {
       type: String,
-      required: [false, "can't be blank"],
+      required: [true, "can't be blank"],
       match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
       unique: true,
       trim: true

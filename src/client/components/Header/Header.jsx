@@ -3,13 +3,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LOGIN, SIGN_UP } from '../../constants';
 
-const Header = ({ signUp, showPopin }) => (
+const Header = ({ isAuthenticated, signUp, showPopin, logout }) => (
   <header>
     <h1>HappyFood</h1>
     <ul className="account-option">
-      <li>
-        <Link to="/user/me">Go to profile</Link>
-      </li>
+      {isAuthenticated && (
+        <li>
+          <Link to="/user/me">Go to profile</Link><br/>
+          <button onClick={logout}>Logout</button>
+        </li>
+      )}
       <li className="login" onClick={() => showPopin(LOGIN)}>
         Login
       </li>
