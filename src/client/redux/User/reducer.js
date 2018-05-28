@@ -1,4 +1,4 @@
-import { SIGN_UP, LOGIN, SET_AUTHENTICATION, LOGOUT } from './action';
+import { SIGN_UP, LOGIN, SET_AUTHENTICATION, LOGOUT, SET_ERROR } from './action';
 
 const initialState = {
   isAuthenticated: false,
@@ -30,6 +30,11 @@ const userReducer = (state = initialState, action) => {
         ...state,
         isAuthenticated: action.isAuthenticated,
         isLoading: false
+      };
+    case SET_ERROR:
+      return {
+        ...state,
+        error: action.errorMessage
       };
     default:
       return state;

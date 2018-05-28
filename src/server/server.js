@@ -9,14 +9,14 @@ const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-
+const RateLimit = require('express-rate-limit');
 const { urlMongoDB } = require('./dataServer');
-
-const port = 3001; // set port server
 
 /* # MODELS # */
 const User = require('./models/User');
 const Recipe = require('./models/Recipe');
+
+const port = 3001; // set port server
 
 /*
   Add this line before express' response to set CORS header:
@@ -26,10 +26,14 @@ const Recipe = require('./models/Recipe');
 mongoose.connect(urlMongoDB);
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'Error connect database'));
-db.once('open', () => {
-  console.log('Connected to database');
+// security (limit number request)
+const apiLimiter = new RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  delayMs: 0 // disabled
 });
+
+app.use('/', apiLimiter);
 
 // set cors
 app.use(cors());
@@ -53,11 +57,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// passport config
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
 // Config bodyParser
 app.use(bodyParser.json()); // For parsing application/json
 app.use(
@@ -66,6 +65,16 @@ app.use(
     limit: '50mb'
   })
 ); // for parsing application/x-www-form-urlencoded
+
+db.on('error', console.error.bind(console, 'Error connect database'));
+db.once('open', () => {
+  console.log('Connected to database');
+});
+
+// passport config
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.get('/fetchFilters', (req, res, next) => {
   const dietLabels = [
@@ -203,7 +212,7 @@ app.get('/getInformationRecipe', (req, res) => {
   const { nameRecipe } = req.query;
 
   Recipe.findOne({ label: nameRecipe }, (err, recipe) => {
-    if (err) return handleError(err);
+    if (err) res.status(500).send({ err });
     res.send({ recipe });
   }).populate('image');
 });
@@ -223,15 +232,9 @@ const checkAuthentication = (req, res, next) => {
   }
 };
 
-const redirects = {
-  successRedirect: '/success',
-  failureRedirect: '/failure'
-};
-
-app.get('/fetchUserInformation', checkAuthentication,(req, res) => {
-
+app.get('/fetchUserInformation', checkAuthentication, (req, res) => {
   User.findById(req.user.id, (err, user) => {
-    if (err) return handleError(err);
+    if (err) res.status(500).send({ err });
     res.send({ user });
   }).populate('avatar');
 });
@@ -240,7 +243,7 @@ app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
   const { type, idRecipe } = req.body;
 
   User.findById(req.user.id, (err, user) => {
-    if (err) return handleError(err);
+    if (err) res.status(500).send({ err });
 
     if (type === 'FAVORITES') {
       user.favorites.push(idRecipe);
@@ -257,7 +260,7 @@ app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
 
 app.post('/updateUser', checkAuthentication, (req, res) => {
   User.findById(req.user.id, (err, user) => {
-    if (err) return handleError(err);
+    if (err) res.status(500).send({ err });
 
     for (const key in req.body) {
       user[key] = req.body[key];
@@ -268,38 +271,43 @@ app.post('/updateUser', checkAuthentication, (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  req.session.destroy(err => {
+  req.session.destroy(() => {
     res.redirect('/');
   });
 });
 
 app.get('/checkUserAuthentication', (req, res) => {
   const isAuthenticated = req.isAuthenticated();
-  res.send({ isAuthenticated });
+  res.status(200).send({ isAuthenticated });
 });
 
-app.post('/signup',(req, res) => {
+app.post('/signup', (req, res) => {
   const { username, email, password } = req.body;
 
   User.register(new User({ username, email }), password, (err, user) => {
-    if (err) console.log(err);
+    if (err) return res.status(500).send({ err });
 
     passport.authenticate('local')(req, res, () => {
       req.session.save(err => {
-        if (err) console.log(err);
+        if (err) return res.status(500).send({ err });
         res.redirect('/');
       });
     });
   });
 });
 
-app.post('/login', passport.authenticate('local'), (req, res) => {
-  if (req.session.passport.user != null) {
-    console.log('You correctly log in');
-    res.redirect('/');
-  } else {
-    console.log('Problem user');
-  }
+app.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return res.status(500).send({ err });
+
+    if (!user) return res.status(401).send({ success: false, message: 'authentication failed' });
+
+    req.login(user, err => {
+      if (err) return res.status(500).send({ err });
+
+      return res.send({ success: true, message: 'authentication succeeded' });
+    });
+  })(req, res, next);
 });
 
 // Execute at the end
