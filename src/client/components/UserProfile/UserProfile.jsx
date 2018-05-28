@@ -12,9 +12,8 @@ class UserProfile extends React.Component {
     const _this = this;
 
     axios
-      .get('/fetchUserInformation')
+      .get('/user/fetchUserInformation')
       .then(res => {
-        console.log(res.data.user);
         _this.setState(res.data.user);
       })
       .catch(err => {

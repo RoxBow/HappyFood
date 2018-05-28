@@ -232,14 +232,14 @@ const checkAuthentication = (req, res, next) => {
   }
 };
 
-app.get('/fetchUserInformation', checkAuthentication, (req, res) => {
+app.get('/user/fetchUserInformation', checkAuthentication, (req, res) => {
   User.findById(req.user.id, (err, user) => {
     if (err) res.status(500).send({ err });
     res.send({ user });
   }).populate('avatar');
 });
 
-app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
+app.post('/user/updateRecipeUser', checkAuthentication, (req, res) => {
   const { type, idRecipe } = req.body;
 
   User.findById(req.user.id, (err, user) => {
@@ -258,7 +258,7 @@ app.post('/updateRecipeUser', checkAuthentication, (req, res) => {
   });
 });
 
-app.post('/updateUser', checkAuthentication, (req, res) => {
+app.post('/user/updateUser', checkAuthentication, (req, res) => {
   User.findById(req.user.id, (err, user) => {
     if (err) res.status(500).send({ err });
 
@@ -270,18 +270,18 @@ app.post('/updateUser', checkAuthentication, (req, res) => {
   });
 });
 
-app.get('/logout', (req, res) => {
+app.get('/user/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
   });
 });
 
-app.get('/checkUserAuthentication', (req, res) => {
+app.get('/user/checkUserAuthentication', (req, res) => {
   const isAuthenticated = req.isAuthenticated();
   res.status(200).send({ isAuthenticated });
 });
 
-app.post('/signup', (req, res) => {
+app.post('/user/signup', (req, res) => {
   const { username, email, password } = req.body;
 
   User.register(new User({ username, email }), password, (err, user) => {
@@ -296,11 +296,10 @@ app.post('/signup', (req, res) => {
   });
 });
 
-app.post('/login', (req, res, next) => {
+app.post('/user/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return res.status(500).send({ err });
-
-    if (!user) return res.status(401).send({ success: false, message: 'authentication failed' });
+    if (!user) return res.status(401).send({ message: 'User or password is incorrect' });
 
     req.login(user, err => {
       if (err) return res.status(500).send({ err });

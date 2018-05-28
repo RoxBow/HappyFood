@@ -15,7 +15,7 @@ export const requestSignUp = e => {
 
   return dispatch => {
     axios
-      .post('/signup', {
+      .post('/user/signup', {
         username,
         password,
         email
@@ -28,7 +28,7 @@ export const requestSignUp = e => {
         }
       })
       .catch(err => {
-        console.log(err);
+        dispatch(setError(err.response.data.err.message));
       });
   };
 };
@@ -41,19 +41,17 @@ export const requestLogin = e => {
 
   return dispatch => {
     axios
-      .post('/login', {
+      .post('/user/login', {
         username,
         password
       })
       .then(res => {
-        if (res.data.err) {
-          dispatch(setError(res.data.err.message));
-        } else {
+        if (!res.data.err) {
           dispatch(login());
         }
       })
       .catch(err => {
-        console.log('login error: ', err);
+        dispatch(setError(err.response.data.message));
       });
   };
 };
@@ -78,7 +76,7 @@ export const setAuthentication = isAuthenticated => {
 };
 
 export const logout = () => {
-  axios.get('/logout').catch(err => {
+  axios.get('/user/logout').catch(err => {
     console.log(err);
   });
 

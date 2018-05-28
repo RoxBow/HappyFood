@@ -25,7 +25,7 @@ const Recipes = ({ recipes }) => {
 
 const updateRecipeUser = (type, idRecipe) => {
   axios
-    .post('/updateRecipeUser', {
+    .post('/user/updateRecipeUser', {
       type,
       idRecipe
     })

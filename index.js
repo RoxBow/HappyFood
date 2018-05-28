@@ -17,7 +17,7 @@ const store = createStore(
 );
 
 axios
-  .get('/checkUserAuthentication')
+  .get('/user/checkUserAuthentication')
   .then(res => {
     const isAuthenticated = res.data.isAuthenticated;
     store.dispatch(setAuthentication(isAuthenticated));

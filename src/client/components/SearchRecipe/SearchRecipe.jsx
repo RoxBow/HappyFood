@@ -70,7 +70,7 @@ class SearchRecipe extends React.Component {
 
 const updateTest = () => {
   axios
-    .post('/updateUser', {
+    .post('/user/updateUser', {
       firstName: 'Allo',
       lastName: 'Escobar'
     })
