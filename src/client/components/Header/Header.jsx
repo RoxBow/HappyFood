@@ -7,18 +7,19 @@ const Header = ({ isAuthenticated, signUp, showPopin, logout }) => (
   <header>
     <h1>HappyFood</h1>
     <ul className="account-option">
-      {isAuthenticated && (
-        <li>
-          <Link to="/user/me">Go to profile</Link><br/>
-          <button onClick={logout}>Logout</button>
-        </li>
-      )}
-      <li className="login" onClick={() => showPopin(LOGIN)}>
-        Login
-      </li>
-      <li className="register" onClick={() => showPopin(SIGN_UP)}>
-        Register
-      </li>
+      {
+        isAuthenticated? (
+          <li className="li-box2">
+            <Link to="/user/me">Go to profile</Link><br/>
+            <button onClick={logout}>Logout</button>
+          </li>
+        ):(
+          <li className="li-box">
+            <button className="login" onClick={() => showPopin(LOGIN)}>Login</button>
+            <button className="register" onClick={() => showPopin(SIGN_UP)}>Register</button>
+          </li>
+        )
+      }
     </ul>
     <ul className="search-option">
       <li>

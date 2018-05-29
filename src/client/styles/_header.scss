@@ -22,16 +22,27 @@ header {
     transform: translateY(-50%);
     right: 0;
 
-    li {
+    
+    .li-box{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      
+      &>* {
+        padding: 20px 15px;
+        text-align: center;
+        cursor: pointer;
+        background-color: white;
+        border: 1px solid lightgrey;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+      }
+    }
+    .li-box2{
       padding: 20px 15px;
-      text-align: center;
-      cursor: pointer;
       background-color: white;
       border: 1px solid lightgrey;
-      -webkit-transition-duration: 0.4s; /* Safari */
-      transition-duration: 0.4s;
     }
-
     .login:hover {
       background-color: #e73b66;
       border: 1px solid #e73b66;       

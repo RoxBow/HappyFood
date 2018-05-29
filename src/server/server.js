@@ -25,6 +25,12 @@ const port = 3001; // set port server
 
 mongoose.connect(urlMongoDB);
 const db = mongoose.connection;
+const corsOptions = {
+  "origin": "*",
+  "methods": "GET",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+}
 
 // security (limit number request)
 const apiLimiter = new RateLimit({
@@ -34,9 +40,6 @@ const apiLimiter = new RateLimit({
 });
 
 app.use('/', apiLimiter);
-
-// set cors
-app.use(cors());
 
 // set helmet security
 app.use(helmet());
@@ -76,7 +79,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get('/fetchFilters', (req, res, next) => {
+app.get('/fetchFilters',cors(corsOptions) ,  (req, res, next) => {
   const dietLabels = [
     'balanced',
     'high-protein',
@@ -123,7 +126,7 @@ app.get('/fetchFilters', (req, res, next) => {
  * ### RECIPE ###
  */
 
-app.get('/api/searchRecipes', (req, res) => {
+app.get('/api/searchRecipes', cors(corsOptions), (req, res) => {
   let { recipeName, diets, health, isNotApi } = req.query;
 
   const conditionSearch = [];
@@ -142,7 +145,7 @@ app.get('/api/searchRecipes', (req, res) => {
   ).populate('image');
 });
 
-app.get('/api/searchRecipesByIngredients', (req, res) => {
+app.get('/api/searchRecipesByIngredients', cors(corsOptions), (req, res) => {
   const { ingredients } = req.query;
 
   Recipe.find(
@@ -155,7 +158,7 @@ app.get('/api/searchRecipesByIngredients', (req, res) => {
   ).populate('image');
 });
 
-app.get('/api/getRandomRecipe', (req, res) => {
+app.get('/api/getRandomRecipe', cors(corsOptions), (req, res) => {
   // const allRandomRecipe = req.query.oldRecipeHistory
   // let present = true
   // let recipeToSend = null
@@ -164,7 +167,7 @@ app.get('/api/getRandomRecipe', (req, res) => {
     // Get a random entry
     const random = Math.floor(Math.random() * count);
 
-    // Again query all recipes but only fetch one offset by our random
+    // Query all recipes but only fetch one offset by our random
     Recipe.findOne()
       .populate('image')
       .skip(random)
@@ -173,42 +176,9 @@ app.get('/api/getRandomRecipe', (req, res) => {
       });
   });
 
-  /* if (allRandomRecipe === undefined) {
-    Recipe.count().exec((err, count) => {
-      // Get a random entry
-      const random = Math.floor(Math.random() * count);
-
-      // Again query all recipes but only fetch one offset by our random
-      Recipe.findOne()
-        .skip(random)
-        .exec((err, randomRecipe) => {
-          res.send(randomRecipe);
-        });
-    });
-  } else{
-
-
-      Recipe.count().exec((err, count) => {
-        // Get a random entry
-        const random = Math.floor(Math.random() * count);
-
-        // Again query all recipes but only fetch one offset by our random
-        Recipe.findOne()
-          .skip(random)
-          .exec((err, randomRecipe) => {
-
-            allRandomRecipe.forEach(element =>{
-              let nv = JSON.parse(element)
-              console.log(randomRecipe.id == nv._id)
-            })
-            res.send(randomRecipe);
-          });
-      });
-
-    } */
 });
 
-app.get('/getInformationRecipe', (req, res) => {
+app.get('/getInformationRecipe',  cors(corsOptions), (req, res) => {
   const { nameRecipe } = req.query;
 
   Recipe.findOne({ label: nameRecipe }, (err, recipe) => {
