@@ -17,7 +17,7 @@ const { downloadImage } = require('../helpers/downloadImage');
  * image -> image
  */
 
-const saveRecipeEdamam = fetchRecipeNameEdamam('coco', listResult => {
+const saveRecipeEdamam = fetchRecipeNameEdamam('chicken', listResult => {
   listResult.forEach(result => {
     let recipe = new Recipe();
 
