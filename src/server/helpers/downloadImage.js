@@ -10,8 +10,8 @@ exports.downloadImage = (uri, filename, callback) => {
     const extension = res.headers['content-type'].split('/')[1];
     const lengthFile = res.headers['content-length'];
     const typeFile = res.headers['content-type'];
-    const pathSrcImg = path.join('/contrib', filename+'.'+extension);
-
+    const pathSrcImg = path.join(__dirname, '../contrib/', filename+'.'+extension);
+    
     const completePath = absolutePath + filename + '.' + extension;
     
     if (fs.existsSync(completePath)) {
@@ -19,6 +19,6 @@ exports.downloadImage = (uri, filename, callback) => {
     }
 
     request(uri).pipe(fs.createWriteStream(completePath));
-    callback(filename, '.'+pathSrcImg, lengthFile, typeFile);
+    callback(filename, pathSrcImg, lengthFile, typeFile);
   });
 };
