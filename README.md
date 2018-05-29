@@ -1,32 +1,17 @@
 # HappyFood
 
-HappyFood is a website which allows you browse food recipes.
-It is also an API you can use to build your project with our ressources.
+HappyFood is a website which allows you browse food recipes.  
+It is also an API you can use to build your project with our ressources.  
 
-Website: https://happyfoodvincentelmar.herokuapp.com/
-APi link: https://happyfoodvincentelmar.herokuapp.com/api/
-
+Website: https://happyfoodvincentelmar.herokuapp.com/  
+API : https://happyfoodvincentelmar.herokuapp.com/api/
 
 # Table of Contents
-1. [Use the API](#use-the-api)
-2. [Local Use](#local-use)  
+1. [Local Use](#local-use)  
 A. [Install project](#install-project)  
 B. [Launch project](#launch-project)
-3. [Built With](#built-with)
-4. [Authors](#authors)
-
-# Use the API
-
-## The routes
-
-You are allowed to make 150 requests every 15 minutes. We set this limit to ensure server stability for all the users of our API.
-
-All routes are accessible by **GET**
-
-+ */searchRecipes/recipeName={**$recipe**}&diets={**$filter**}&health={**$filter**}* 
-+ */searchWithIngredients/ingredients={**$ingredients**}*
-+ */getRandomRecipe*
-
+2. [Built With](#built-with)
+3. [Authors](#authors)
 
 # Local Use
 
@@ -71,8 +56,7 @@ cd C:\Program Files\MongoDB\Server\3.6\bin
 $ mongod
 ```
 
-
-Launch the project with 
+Then launch the project with 
 ```
 $ yarn start
 ```
@@ -92,7 +76,5 @@ then go to http://localhost:3001
 
 # Authors
 
-
 * **Vincent Deplais** - [RoxBow](https://github.com/RoxBow)
 * **Elmar Furtado Tavares** - [Elmarino](https://github.com/Elmarino)
-
