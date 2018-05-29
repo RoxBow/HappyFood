@@ -1,5 +1,4 @@
 import '../../styles/_form.scss';
-
 import React from 'react';
 import { Field } from 'redux-form';
 import Input from './Input';

@@ -1,8 +1,8 @@
 import '../../styles/_filters.scss';
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
 import Filter from './Filter';
-class Filters extends Component {
+class Filters extends React.Component {
   constructor(props) {
     super(props);
 

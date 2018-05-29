@@ -1,3 +1,5 @@
+import { SHOW_POPIN, HIDE_POPIN } from './action';
+
 const initialState = {
   open: false,
   popinType: null
@@ -5,12 +7,13 @@ const initialState = {
 
 const popinReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SHOW_POPIN':
-      return Object.assign({}, state, {
+    case  SHOW_POPIN:
+      return {
+        ...state,
         open: true,
         popinType: action.popinType
-      });
-    case 'HIDE_POPIN':
+      };
+    case HIDE_POPIN:
       return initialState;
     default:
       return state;

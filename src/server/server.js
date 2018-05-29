@@ -5,16 +5,18 @@ const path = require('path');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const cors = require('cors');
-
+const helmet = require('helmet');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const RateLimit = require('express-rate-limit');
 const { urlMongoDB } = require('./dataServer');
-const { convertToDataUrl } = require('./helpers/convertToDataUrl');
-
-const port = 3001; // set port server
 
 /* # MODELS # */
 const User = require('./models/User');
 const Recipe = require('./models/Recipe');
-const Image = require('./models/Image');
+
+const port = 3001; // set port server
 
 /*
   Add this line before express' response to set CORS header:
@@ -23,27 +25,61 @@ const Image = require('./models/Image');
 
 mongoose.connect(urlMongoDB);
 const db = mongoose.connection;
+const corsOptions = {
+  "origin": "*",
+  "methods": "GET",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+}
+
+// security (limit number request)
+const apiLimiter = new RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 150,
+  delayMs: 0 // disabled
+});
+
+app.use('/', apiLimiter);
+
+// set helmet security
+app.use(helmet());
+
+// load statics files
+app.use('/contrib', express.static(path.join(__dirname, 'contrib')));
+app.use(express.static('dist'));
+
+app.use(
+  session({
+    cookieName: 'session',
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Config bodyParser
+app.use(bodyParser.json()); // For parsing application/json
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+    limit: '50mb'
+  })
+); // for parsing application/x-www-form-urlencoded
 
 db.on('error', console.error.bind(console, 'Error connect database'));
 db.once('open', () => {
   console.log('Connected to database');
 });
 
-// set cors module on server express
-app.use(cors());
+// passport config
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-// Load statics files
-app.use(express.static('dist'));
-
-// Config bodyParser
-app.use(bodyParser.json()); // For parsing application/json
-app.use(
-  bodyParser.urlencoded({
-    extended: true
-  })
-); // for parsing application/x-www-form-urlencoded
-
-app.get('/fetchFilters', (req, res, next) => {
+app.get('/fetchFilters',cors(corsOptions) ,  (req, res, next) => {
   const dietLabels = [
     'balanced',
     'high-protein',
@@ -86,35 +122,11 @@ app.get('/fetchFilters', (req, res, next) => {
   res.send({ dietLabels, healthLabels });
 });
 
-app.post('/signup', (req, res) => {
-  let user = new User();
+/**
+ * ### RECIPE ###
+ */
 
-  user.username = req.body.username;
-  user.password = req.body.password;
-  user.email = req.body.email;
-
-  // Save user in BDD
-  user.save(err => {
-    if (err) {
-      if (err.name === 'ValidationError') {
-        /**
-         *  # TODO #
-         * Send all errors
-         */
-        for (field in err.errors) {
-          res.send({ error: err.errors[field].message });
-          break; // don't remove (avoid crash server 'cause of multiple response send)
-        }
-      } else if (err.name === 'BulkWriteError' && err.code === 11000) {
-        res.send({ error: 'Email or username already exists !' });
-      }
-    } else {
-      res.send({ message: 'User saved in BDD' });
-    }
-  });
-});
-
-app.get('/api/searchRecipes', (req, res) => {
+app.get('/api/searchRecipes', cors(corsOptions), (req, res) => {
   let { recipeName, diets, health, isNotApi } = req.query;
 
   const conditionSearch = [];
@@ -122,31 +134,6 @@ app.get('/api/searchRecipes', (req, res) => {
   if (recipeName) conditionSearch.push({ label: { $regex: recipeName, $options: 'i' } });
   if (diets) conditionSearch.push({ diets: { $in: diets } });
   if (health) conditionSearch.push({ health: { $in: health } });
-
-  // for web
-  if (isNotApi) {
-    Recipe.find(
-      {
-        $or: conditionSearch
-      },
-      (err, recipe) => {
-        res.send(recipe);
-      }
-    ).populate('image');
-  } else {
-    Recipe.find(
-      {
-        $or: conditionSearch
-      },
-      (err, recipe) => {
-        res.send(recipe);
-      }
-    );
-  }
-});
-
-app.get('/api/searchRecipesByIngredients', (req, res) => {
-  const { ingredients } = req.query;
 
   Recipe.find(
     {
@@ -158,61 +145,8 @@ app.get('/api/searchRecipesByIngredients', (req, res) => {
   ).populate('image');
 });
 
-app.get('/api/getRandomRecipe', (req, res) => {
-  // const allRandomRecipe = req.query.oldRecipeHistory
-  // let present = true
-  // let recipeToSend = null
-
-  Recipe.count().exec((err, count) => {
-    // Get a random entry
-    const random = Math.floor(Math.random() * count);
-
-    // Again query all recipes but only fetch one offset by our random
-    Recipe.findOne()
-      .populate('image')
-      .skip(random)
-      .exec((err, randomRecipe) => {
-        res.send(randomRecipe);
-      });
-  });
-
-  /* if (allRandomRecipe === undefined) {
-    Recipe.count().exec((err, count) => {
-      // Get a random entry
-      const random = Math.floor(Math.random() * count);
-
-      // Again query all recipes but only fetch one offset by our random
-      Recipe.findOne()
-        .skip(random)
-        .exec((err, randomRecipe) => {
-          res.send(randomRecipe);
-        });
-    });
-  } else{
-
-
-      Recipe.count().exec((err, count) => {
-        // Get a random entry
-        const random = Math.floor(Math.random() * count);
-
-        // Again query all recipes but only fetch one offset by our random
-        Recipe.findOne()
-          .skip(random)
-          .exec((err, randomRecipe) => {
-
-            allRandomRecipe.forEach(element =>{
-              let nv = JSON.parse(element)
-              console.log(randomRecipe.id == nv._id)
-            })
-            res.send(randomRecipe);
-          });
-      });
-
-    } */
-});
-
-app.post('/api/searchRecipesByIngredients', (req, res) => {
-  const { ingredients } = req.body;
+app.get('/api/searchRecipesByIngredients', cors(corsOptions), (req, res) => {
+  const { ingredients } = req.query;
 
   Recipe.find(
     {
@@ -221,40 +155,128 @@ app.post('/api/searchRecipesByIngredients', (req, res) => {
     (err, recipe) => {
       res.send(recipe);
     }
-  );
+  ).populate('image');
 });
 
-app.post('/api/randomRecipe', (req, res) => {
-  // Get the count of all recipes
+app.get('/api/getRandomRecipe', cors(corsOptions), (req, res) => {
+  // const allRandomRecipe = req.query.oldRecipeHistory
+  // let present = true
+  // let recipeToSend = null
+
   Recipe.count().exec((err, count) => {
     // Get a random entry
     const random = Math.floor(Math.random() * count);
 
-    // Again query all recipes but only fetch one offset by our random
+    // Query all recipes but only fetch one offset by our random
     Recipe.findOne()
+      .populate('image')
       .skip(random)
       .exec((err, randomRecipe) => {
         res.send(randomRecipe);
       });
   });
+
 });
 
-app.post('/login', (req, res) => {
-  const { username, pwd } = req.body;
+app.get('/getInformationRecipe',  cors(corsOptions), (req, res) => {
+  const { nameRecipe } = req.query;
 
-  const query = User.findOne({ username: username, password: pwd });
+  Recipe.findOne({ label: nameRecipe }, (err, recipe) => {
+    if (err) res.status(500).send({ err });
+    res.send({ recipe });
+  }).populate('image');
+});
 
-  //select username & password field
-  query.select('username password');
+/**
+ * ### USER ###
+ */
 
-  // execute the query at a later time
-  query.exec((err, user) => {
-    if (user) {
-      res.send(user.id);
+// Restrict user access
+const checkAuthentication = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    //req.isAuthenticated() will return true if user is logged in
+    next();
+  } else {
+    console.log('Not authenticated');
+    res.redirect('/');
+  }
+};
+
+app.get('/user/fetchUserInformation', checkAuthentication, (req, res) => {
+  User.findById(req.user.id, (err, user) => {
+    if (err) res.status(500).send({ err });
+    res.send({ user });
+  }).populate('avatar');
+});
+
+app.post('/user/updateRecipeUser', checkAuthentication, (req, res) => {
+  const { type, idRecipe } = req.body;
+
+  User.findById(req.user.id, (err, user) => {
+    if (err) res.status(500).send({ err });
+
+    if (type === 'FAVORITES') {
+      user.favorites.push(idRecipe);
+    } else if (type === 'RECIPESDONE') {
+      user.recipesDone.push(idRecipe);
     } else {
-      res.send({ message: 'Error user login' });
+      console.log('Type request recipe - not defined / not exist');
+      return;
     }
+
+    user.save();
   });
+});
+
+app.post('/user/updateUser', checkAuthentication, (req, res) => {
+  User.findById(req.user.id, (err, user) => {
+    if (err) res.status(500).send({ err });
+
+    for (const key in req.body) {
+      user[key] = req.body[key];
+    }
+
+    user.save();
+  });
+});
+
+app.get('/user/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
+});
+
+app.get('/user/checkUserAuthentication', (req, res) => {
+  const isAuthenticated = req.isAuthenticated();
+  res.status(200).send({ isAuthenticated });
+});
+
+app.post('/user/signup', (req, res) => {
+  const { username, email, password } = req.body;
+
+  User.register(new User({ username, email }), password, (err, user) => {
+    if (err) return res.status(500).send({ err });
+
+    passport.authenticate('local')(req, res, () => {
+      req.session.save(err => {
+        if (err) return res.status(500).send({ err });
+        res.redirect('/');
+      });
+    });
+  });
+});
+
+app.post('/user/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return res.status(500).send({ err });
+    if (!user) return res.status(401).send({ message: 'User or password is incorrect' });
+
+    req.login(user, err => {
+      if (err) return res.status(500).send({ err });
+
+      return res.send({ success: true, message: 'authentication succeeded' });
+    });
+  })(req, res, next);
 });
 
 // Execute at the end

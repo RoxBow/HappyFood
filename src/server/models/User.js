@@ -2,6 +2,8 @@
 
 const mongoose = require('mongoose');
 const Image = require('./Image');
+const passport = require('passport');
+const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
 
 const User = new Schema(
@@ -15,11 +17,6 @@ const User = new Schema(
       maxlength: [10, 'username too long'],
       unique: true,
       admin: Boolean
-    },
-    password: {
-      type: String,
-      required: [true, "can't be blank"],
-      minlength: [6, 'password too short']
     },
     firstName: {
       type: String
@@ -35,8 +32,8 @@ const User = new Schema(
       trim: true
     },
     avatar: { type: Schema.Types.ObjectId, ref: 'Image' },
-    favorites: Array,
-    recipesDone: Array
+    favorites: [{ type: String }],
+    recipesDone: [{ type: String }]
   },
   {
     timestamps: {
@@ -45,5 +42,7 @@ const User = new Schema(
     }
   }
 );
+
+User.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('User', User);

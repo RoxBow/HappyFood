@@ -1,7 +1,7 @@
-const Recipe = require('../models/Recipe');
 const Image = require('../models/Image');
-const { fetchRecipeNameEdamam } = require('./requestApi');
-const { convertToDataUrl } = require('../helpers/convertToDataUrl');
+const Recipe = require('../models/Recipe');
+const { fetchRecipeNameEdamam } = require('./requestApi');
+const { downloadImage } = require('../helpers/downloadImage');
 
 /**
  * Our model -> api's model
@@ -20,30 +20,35 @@ const { convertToDataUrl } = require('../helpers/convertToDataUrl');
 const saveRecipeEdamam = fetchRecipeNameEdamam('salad', listResult => {
   listResult.forEach(result => {
     let recipe = new Recipe();
-    let thumbRecipe = new Image();
 
     recipe.label = result.recipe.label;
     recipe.description = '';
     recipe.steps = result.recipe.ingredientLines;
-    recipe.ingredients = result.recipe.ingredientLines
+    recipe.ingredients = result.recipe.ingredientLines;
     recipe.diets = result.recipe.dietLabels;
     recipe.health = result.recipe.healthLabels;
     recipe.calories = result.recipe.calories;
     recipe.source = result.recipe.url;
 
-    convertToDataUrl(result.recipe.image, (dataImage, contentType) => {
-      thumbRecipe.data = dataImage;
-      thumbRecipe.contentType = contentType;
-      recipe.image = thumbRecipe;
+    downloadImage(result.recipe.image, recipe._id, (filename, completePath, lengthFile, typeFile) => {
+      const imageRecipe = new Image ({
+        name: filename,
+        path: completePath,
+        length: lengthFile,
+        type: typeFile
+      });
 
-      // save img of recipe
-      thumbRecipe.save();
-
+      recipe.image = imageRecipe;
+      
       recipe.save(err => {
         if (err) console.log(err);
-        else console.log('All recipes saved in BDD from Edamam');
+        else {
+          imageRecipe.save();
+          console.log('All recipes saved in BDD from Edamam');
+        } 
       });
     });
+
   });
 });
 

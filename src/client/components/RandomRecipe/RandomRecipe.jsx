@@ -1,48 +1,45 @@
 import '../../styles/_randomRecipe.scss';
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
-import base64ArrayBuffer from '../../helpers/base64ArrayBuffer';
+import { Link } from 'react-router-dom';
 
-
-class RandomRecipe extends Component {
-  constructor(){
-    super()
+class RandomRecipe extends React.Component {
+  constructor() {
+    super();
     this.state = {
-      recipeHistory:[]
-    }
+      recipeHistory: []
+    };
   }
 
-  componentDidMount(){
-    this.setRandom()
+  componentDidMount() {
+    this.setRandom();
   }
 
-  previous(){
+  previous() {
     this.setState({
-      recipeHistory: this.state.recipeHistory.slice(0, -1)    
-    })
+      recipeHistory: this.state.recipeHistory.slice(0, -1)
+    });
   }
 
-  setRandom(){
-    var _this = this;
-    const oldRecipeHistory = this.state.recipeHistory
-    axios
-      .get('/api/getRandomRecipe',/* {
-        params: {oldRecipeHistory}
-      } */)
-      .then(response => {
-        
+  setRandom() {
+    const _this = this;
+    const oldRecipeHistory = this.state.recipeHistory;
 
+    axios
+      .get('/api/getRandomRecipe')
+      .then(response => {
+        console.log(response.data)
         if (this.state.recipeHistory.length >= 10) {
           this.setState({
-            recipeHistory: this.state.recipeHistory.slice(1) 
-          })
+            recipeHistory: this.state.recipeHistory.slice(1)
+          });
           this.setState({
-            recipeHistory: [... this.state.recipeHistory, response.data]
-          })
-        } else{
+            recipeHistory: [...this.state.recipeHistory, response.data]
+          });
+        } else {
           this.setState({
-            recipeHistory: [... this.state.recipeHistory, response.data]
-          })
+            recipeHistory: [...this.state.recipeHistory, response.data]
+          });
         }
       })
       .catch(err => {
@@ -50,40 +47,54 @@ class RandomRecipe extends Component {
       });
   }
 
-  render(){
-    const array_len = this.state.recipeHistory.length
-    const theRandomRecipe = this.state.recipeHistory.map((randomRecipe, i) =>{
-      if (i == array_len -1) {
-        return(
+  render() {
+    const array_len = this.state.recipeHistory.length;
+
+    const theRandomRecipe = this.state.recipeHistory.map((randomRecipe, i) => {
+      if (i == array_len - 1) {
+        return (
           <div key={i} className="randomRecipe">
-            <img src={base64ArrayBuffer(randomRecipe.image.data.data, randomRecipe.image.contentType)} alt={randomRecipe.label} /> 
-            <p>{randomRecipe.label}</p>
+            <p className="title">{randomRecipe.label}</p>            
+            <img
+              className="img-recipe"
+              src={randomRecipe.image.path}
+              alt={randomRecipe.label}
+            />
+            <p className="subtitle">Ingrédients</p>
+            {randomRecipe.steps.map(element=>{
+              return <p className="step">- {element}</p>
+            })}
+            <p className="subtitle">Préparation</p>
+            <p className="description">{randomRecipe.description}</p>
           </div>
-        )
+        );
       }
-    })
+    });
 
     return (
       <div>
         <div className="container">
-          <div onClick={()=>{this.previous()}} className="previous">
-            Passé top vite ?
+          <div onClick={() => { this.previous(); } } className="previous">
+            Passé trop vite ?
           </div>
-          <div>
-            {theRandomRecipe}
-          </div>
-          <div onClick={()=>{this.setRandom()}} className="newRandom">
+          <div
+            onClick={() => {
+              this.setRandom();
+            }}
+            className="newRandom"
+          >
             Random Recipe
           </div>
         </div>
+        <div>{theRandomRecipe}</div>
+        
         {/* <div>
           <button type="button" onClick={()=>{this.setRandom()}} className="random-button">
             Random Recipe
           </button>
         </div> */}
       </div>
-      
-    )
+    );
   }
 }
 
