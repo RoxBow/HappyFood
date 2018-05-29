@@ -40,11 +40,6 @@ class SearchRecipe extends React.Component {
 
     return (
       <div className="search-recipe">
-        <div>
-          <button type="button" onClick={() => updateTest()}>
-            UPDATE TEST
-          </button>
-        </div>
 
         <form onSubmit={e => this.handleSubmit(e)}>
           <div className="wrapper-search-bar">
@@ -67,19 +62,5 @@ class SearchRecipe extends React.Component {
     );
   }
 }
-
-const updateTest = () => {
-  axios
-    .post('/user/updateUser', {
-      firstName: 'Allo',
-      lastName: 'Escobar'
-    })
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
 
 export default SearchRecipe;
