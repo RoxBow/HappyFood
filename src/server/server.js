@@ -19,7 +19,7 @@ const Recipe = require('./models/Recipe');
 const port = 3001; // set port server
 
 //const { saveRecipeMealDB  } = require('./requestApi/themealdbRequest.js')
-const { saveRecipeEdamam  } = require('./requestApi/edamamRequest.js');
+// const { saveRecipeEdamam  } = require('./requestApi/edamamRequest.js');
 // const { saveRecipeEdama  } = require('./requestApi/edamamRequest.js')
 // const { saveRecipeEdam  } = require('./requestApi/edamamRequest.js')
 // const { saveRecipeEda  } = require('./requestApi/edamamRequest.js')
@@ -45,7 +45,7 @@ app.use(cors())
 app.use('/', apiLimiter);
 
 // set helmet security
-app.use(helmet());
+app.use(helmet.noCache());
 
 // load statics files
 app.use('/contrib', express.static(path.join(__dirname, 'contrib')));
