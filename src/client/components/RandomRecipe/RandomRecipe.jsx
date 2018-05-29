@@ -28,6 +28,7 @@ class RandomRecipe extends React.Component {
     axios
       .get('/api/getRandomRecipe')
       .then(response => {
+        console.log(response.data)
         if (this.state.recipeHistory.length >= 10) {
           this.setState({
             recipeHistory: this.state.recipeHistory.slice(1)
@@ -53,11 +54,18 @@ class RandomRecipe extends React.Component {
       if (i == array_len - 1) {
         return (
           <div key={i} className="randomRecipe">
+            <p className="title">{randomRecipe.label}</p>            
             <img
+              className="img-recipe"
               src={randomRecipe.image.path}
               alt={randomRecipe.label}
             />
-            <p>{randomRecipe.label}</p>
+            <p className="subtitle">Ingrédients</p>
+            {randomRecipe.steps.map(element=>{
+              return <p className="step">- {element}</p>
+            })}
+            <p className="subtitle">Préparation</p>
+            <p className="description">{randomRecipe.description}</p>
           </div>
         );
       }
@@ -67,9 +75,8 @@ class RandomRecipe extends React.Component {
       <div>
         <div className="container">
           <div onClick={() => { this.previous(); } } className="previous">
-            Passé top vite ?
+            Passé trop vite ?
           </div>
-          <div>{theRandomRecipe}</div>
           <div
             onClick={() => {
               this.setRandom();
@@ -79,6 +86,8 @@ class RandomRecipe extends React.Component {
             Random Recipe
           </div>
         </div>
+        <div>{theRandomRecipe}</div>
+        
         {/* <div>
           <button type="button" onClick={()=>{this.setRandom()}} className="random-button">
             Random Recipe

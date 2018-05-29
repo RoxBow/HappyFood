@@ -7,16 +7,24 @@ const Recipes = ({ recipes }) => {
     <ul className="recipes">
       {recipes.map((recipe, i) => (
         <li key={i}>
-          <Link to={`/recipe/${recipe.label}`}>
-            <img src={recipe.image.path} alt={recipe.label} />
-          </Link>
-          <button onClick={() => updateRecipeUser('FAVORITES', recipe._id)}>
-            Add to my favorite
-          </button>
-          <button onClick={() => updateRecipeUser('RECIPESDONE', recipe._id)}>
-            Add to my recipe done
-          </button>
-          <p>{recipe.label}</p>
+          <div className="entete">
+            <div>
+              <Link to={`/recipe/${recipe.label}`}>
+                <img className="imgRecipe" src={recipe.image.path} alt={recipe.label} />
+              </Link>
+            </div>
+            <div>
+              <p className="title">{recipe.label}</p>
+            </div>
+          </div>
+          <div className="addRecipe">
+            <button className="fav" onClick={() => updateRecipeUser('FAVORITES', recipe._id)}>
+              Add to my favorite
+            </button>
+            <button className="done" onClick={() => updateRecipeUser('RECIPESDONE', recipe._id)}>
+              Add to my recipe done
+            </button>
+          </div>
         </li>
       ))}
     </ul>

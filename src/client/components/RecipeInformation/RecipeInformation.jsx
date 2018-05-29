@@ -29,9 +29,9 @@ class RecipeInformation extends React.Component {
 
   renderList(title, list) {
     return (
-      <div>
+      <div className="elements">
         <h3>{title}</h3>
-        <ul>{list.map((element, i) => <li key={i}>{element}</li>)}</ul>
+        <ul>{list.map((element, i) => <li key={i}>- {element}</li>)}</ul>
       </div>
     );
   }
@@ -41,15 +41,24 @@ class RecipeInformation extends React.Component {
 
     return (
       <div className="recipe-information">
-        <h2>{label}</h2>
-        {image && <img src={`../${image.path}`} alt={label} />}
-        <p className="description">
-          Explication:<br /> {description}
-        </p>
-        {ingredients && this.renderList('Ingredients', ingredients)}
-        {steps && this.renderList('Steps', steps)}
-        {diets && this.renderList('Diets', diets)}
-        {health && this.renderList('Health', health)}
+        <h2 className="title">{label}</h2>
+        <div className="img-ingredients">
+          <div className="img-box">
+            {image && <img src={`../${image.path}`} alt={label} />}
+          </div>
+          <p className="description">
+            Résumé:<br /> {description}
+          </p>
+        </div>
+        <div className="img-ingredients">
+          {ingredients && this.renderList('Ingredients', ingredients)}
+          {steps && this.renderList('Steps', steps)}
+          {diets && this.renderList('Diets', diets)}
+          {health && this.renderList('Health', health)}
+        </div>
+        
+        
+        
       </div>
     );
   }

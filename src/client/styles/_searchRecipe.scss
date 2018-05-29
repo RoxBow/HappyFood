@@ -15,6 +15,12 @@
     align-items: center;
   }
 
+  h3{
+    margin: 15px 0 10px;
+    text-transform: uppercase;
+    border-bottom: 1px solid lightgrey
+  }
+
   .wrapper-search-bar {
     display: flex;
     width: 100%;
@@ -31,13 +37,29 @@
     align-self: flex-start;
     padding: 6px 16px;
     margin: 12px 0;
-    border: 1px solid #000;
+    border: 1px solid rgb(231, 59, 102);
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    background-color: white;
+  }
+
+  .more:hover {
+      background-color: rgb(231, 59, 102);
+      color: white;
   }
 
   input[type='submit'] {
     padding: 8px 16px;
     margin-left: 8px;
-    border: 1px solid #000;
+    background-color: white;  
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    border: 1px solid rgb(0, 207, 31);
+  }
+
+  input[type='submit']:hover {
+    background-color: rgb(0, 207, 31); /* Green */
+    color: white;
   }
 
   .recipes {
@@ -50,6 +72,52 @@
       padding: 10px 0;
       border-bottom: 1px solid #000;
       cursor: pointer;
+      & .entete{
+        display: flex;
+        align-items: center;
+        &>div{
+          width: 50%;
+        }
+        & .imgRecipe{
+          width: 100%;
+        }
+        & .title{ 
+          color: #111; 
+          font-family: 'Lato', sans-serif;
+          font-weight: 300;
+          font-size: 50px; 
+          width: 75%;
+          letter-spacing: -1px; 
+          line-height: 1; 
+          text-align: center; 
+          margin-bottom: 20px;
+        }
+      }
+      & .addRecipe{
+        display:  flex;
+        justify-content: flex-end;
+        width: 100%;
+        margin-top: 10px;
+        &>*{
+          margin: 0 0 0 10px;
+          padding: 5px 10px;
+          background: white;
+          -webkit-transition-duration: 0.4s; /* Safari */
+          transition-duration: 0.4s;
+        }
+        & .fav{
+          border: 1px solid #e73b66;
+        }
+        & .fav:hover{
+          background:  #e73b66;
+        }
+        & .done{
+          border: 1px solid rgb(0, 207, 31);
+        }
+        & .done:hover{
+          background: rgb(0, 207, 31);
+        }
+      }
     }
   }
 }
