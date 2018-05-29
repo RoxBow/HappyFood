@@ -18,6 +18,9 @@ const Recipe = require('./models/Recipe');
 
 const port = 3001; // set port server
 
+const { saveRecipeMealDB  } = require('./requestApi/themealdbRequest.js')
+const { saveRecipeEdamam  } = require('./requestApi/edamamRequest.js')
+
 /*
   Add this line before express' response to set CORS header:
   res.header("Access-Control-Allow-Origin", "*");
