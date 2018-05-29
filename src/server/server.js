@@ -18,8 +18,8 @@ const Recipe = require('./models/Recipe');
 
 const port = 3001; // set port server
 
-/* const { saveRecipeMealDB  } = require('./requestApi/themealdbRequest.js')
-const { saveRecipeEdamam  } = require('./requestApi/edamamRequest.js') */
+const { saveRecipeMealDB  } = require('./requestApi/themealdbRequest.js')
+/*const { saveRecipeEdamam  } = require('./requestApi/edamamRequest.js') */
 
 /*
   Add this line before express' response to set CORS header:
@@ -28,12 +28,6 @@ const { saveRecipeEdamam  } = require('./requestApi/edamamRequest.js') */
 
 mongoose.connect(urlMongoDB);
 const db = mongoose.connection;
-const corsOptions = {
-  "origin": "*",
-  "methods": "GET",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204
-}
 
 // security (limit number request)
 const apiLimiter = new RateLimit({
@@ -41,6 +35,8 @@ const apiLimiter = new RateLimit({
   max: 150,
   delayMs: 0 // disabled
 });
+
+app.use(cors())
 
 app.use('/', apiLimiter);
 
@@ -82,7 +78,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get('/fetchFilters',cors(corsOptions) ,  (req, res, next) => {
+app.get('/fetchFilters', (req, res, next) => {
   const dietLabels = [
     'balanced',
     'high-protein',
@@ -129,7 +125,7 @@ app.get('/fetchFilters',cors(corsOptions) ,  (req, res, next) => {
  * ### RECIPE ###
  */
 
-app.get('/api/searchRecipes', cors(corsOptions), (req, res) => {
+app.get('/api/searchRecipes', (req, res) => {
   let { recipeName, diets, health, isNotApi } = req.query;
 
   const conditionSearch = [];
@@ -148,7 +144,7 @@ app.get('/api/searchRecipes', cors(corsOptions), (req, res) => {
   ).populate('image');
 });
 
-app.get('/api/searchRecipesByIngredients', cors(corsOptions), (req, res) => {
+app.get('/api/searchRecipesByIngredients', (req, res) => {
   const { ingredients } = req.query;
 
   Recipe.find(
@@ -161,7 +157,7 @@ app.get('/api/searchRecipesByIngredients', cors(corsOptions), (req, res) => {
   ).populate('image');
 });
 
-app.get('/api/getRandomRecipe', cors(corsOptions), (req, res) => {
+app.get('/api/getRandomRecipe', (req, res) => {
   // const allRandomRecipe = req.query.oldRecipeHistory
   // let present = true
   // let recipeToSend = null
@@ -181,7 +177,7 @@ app.get('/api/getRandomRecipe', cors(corsOptions), (req, res) => {
 
 });
 
-app.get('/getInformationRecipe',  cors(corsOptions), (req, res) => {
+app.get('/getInformationRecipe', (req, res) => {
   const { nameRecipe } = req.query;
 
   Recipe.findOne({ label: nameRecipe }, (err, recipe) => {
