@@ -49,7 +49,6 @@ app.use(helmet());
 
 // load statics files
 app.use('/contrib', express.static(path.join(__dirname, 'contrib')));
-app.use(express.static('dist'));
 
 app.use(
   session({
@@ -71,6 +70,8 @@ app.use(
     limit: '50mb'
   })
 ); // for parsing application/x-www-form-urlencoded
+
+app.use(express.static('dist'));
 
 db.on('error', console.error.bind(console, 'Error connect database'));
 db.once('open', () => {
