@@ -12,6 +12,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const RateLimit = require('express-rate-limit');
 const { urlMongoDB } = require('./dataServer');
 
+const { saveRecipeMealDB } = require('./requestApi/themealdbRequest');
+
 /* # MODELS # */
 const User = require('./models/User');
 const Recipe = require('./models/Recipe');
